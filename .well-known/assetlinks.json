@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.ailearningalk_cell.twa",
+        "sha256_cert_fingerprints": ["0C:FC:F4:17:5B:90:18:1A:DD:7F:6A:C5:68:73:52:D4:C1:39:CE:91:71:FD:24:10:D1:FF:82:EA:46:2C:51:2D"]
+      }
+    }]
