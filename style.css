@@ -273,6 +273,14 @@ body {
   .card-title {
     color: #f7fafc;
   }
+
+  body, html {
+  overflow: hidden !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
   
   .card-description {
     color: #a0aec0;
