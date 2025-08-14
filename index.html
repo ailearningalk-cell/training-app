@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta name="theme-color" content="#2193b0">
+    <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/training-app/sw.js');
+}
+</script>
 </head>
 
 <body>
