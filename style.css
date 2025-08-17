@@ -1,289 +1,118 @@
-
-<old_str>
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #89f7fe, #2193b0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  padding: 20px;
-  width: 100%;
-  max-width: 350px;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 20px;
-  text-align: center;
-  color: white;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-
-.card:hover {
-  transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.icon {
-  font-size: 2em;
-  margin-bottom: 10px;
-}
-
-.pwa-mode .install-btn {
-  display: none;
-  /* Hide install button when already installed */
-}
-</old_str>
-<new_str>
-* {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  background: #f5f7fa;
 }
 
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  color: #333;
-  line-height: 1.6;
-}
-
-.app-header {
-  text-align: center;
-  padding: 2rem 1rem 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.app-title {
-  font-size: 2.5rem;
-  font-weight: 700;
+header {
+  background: #4CAF50;
   color: white;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  letter-spacing: -0.02em;
+  padding: 10px;
+  text-align: center;
 }
 
-.app-subtitle {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 400;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.container {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  padding: 2rem 1rem;
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 1.5rem;
+nav {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  backdrop-filter: blur(20px);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.05);
+  justify-content: space-around;
+  background: #333;
+}
+
+nav button {
+  flex: 1;
+  padding: 10px;
+  background: #333;
+  color: white;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  overflow: hidden;
+  font-size: 16px;
+}
+nav button:hover {
+  background: #555;
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--card-accent);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+main {
+  padding: 10px;
 }
 
-.card:hover::before {
-  transform: scaleX(1);
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 
-    0 16px 48px rgba(0, 0, 0, 0.15),
-    0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.card:active {
-  transform: translateY(-2px);
-}
-
-.card-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex: 1;
-}
-
-.icon {
-  font-size: 2rem;
-  color: var(--card-accent);
-  min-width: 48px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.card:hover .icon {
-  transform: scale(1.1);
-}
-
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 0.25rem;
-  letter-spacing: -0.01em;
-}
-
-.card-description {
-  font-size: 0.9rem;
-  color: #718096;
-  font-weight: 400;
-}
-
-.card-arrow {
-  color: #a0aec0;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.card:hover .card-arrow {
-  color: var(--card-accent);
-  transform: translateX(4px);
-}
-
-/* Card color variants */
-.card.primary {
-  --card-accent: #667eea;
-}
-
-.card.secondary {
-  --card-accent: #f093fb;
-}
-
-.card.accent {
-  --card-accent: #4facfe;
-}
-
-.card.neutral {
-  --card-accent: #43e97b;
-}
-
-.app-footer {
-  text-align: center;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-}
-
-/* Responsive design */
-@media (min-width: 640px) {
-  .container {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 800px;
-    gap: 2rem;
-  }
-  
-  .app-title {
-    font-size: 3rem;
-  }
-  
-  .card {
-    padding: 2rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 900px;
-  }
-}
-
-/* PWA specific styles */
-.pwa-mode .install-btn {
+section {
   display: none;
 }
 
-/* Accessibility improvements */
-.card:focus {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
+section.active {
+  display: block;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .card,
-  .icon,
-  .card-arrow,
-  .card::before {
-    transition: none;
-  }
-  
-  .card:hover {
-    transform: none;
+iframe {
+  width: 100%;
+  height: 500px;
+  border: none;
+}
+
+@media (max-width: 600px) {
+  iframe {
+    height: 300px;
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .card {
-    background: rgba(26, 32, 44, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .card-title {
-    color: #f7fafc;
-  }
+/* Month Grid */
 
-  body, html {
-  overflow: hidden !important;
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
+#month-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
 }
-  
-  .card-description {
-    color: #a0aec0;
+
+/* Medium screens (tablet) — 3 columns */
+@media (min-width: 600px) {
+  #month-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
-</new_str>
+
+/* Large screens (desktop) — 4 columns */
+@media (min-width: 900px) {
+  #month-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+#month-grid button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+#month-grid button:hover {
+  background: #45a049;
+}
+
+#month-grid .upcoming {
+  background: #ff9800;
+}
+
+/* Program Cards */
+
+.card {
+  background: white;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #4CAF50;
+}
+
+#program-list, #today-list {
+  max-width: 700px;
+  margin: 0 auto;
+}
