@@ -1,33 +1,21 @@
 {
-  "name": "Training Hub",
+  "name": "Training App",
   "short_name": "Training",
-  "description": "An interactive hub for learning and training, accessible anywhere.",
-  "start_url": "/training-app/?source=pwa",
-  "scope": "/training-app/",
+  "start_url": ".",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#2193b0",
-  "theme_color": "#2193b0",
+  "background_color": "#2980b9",
+  "theme_color": "#2980b9",
+  "description": "A PWA for Training Dashboard and Programs",
   "icons": [
     {
-      "src": "/training-app/icons/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "/training-app/icons/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Start Training",
-      "short_name": "Start",
-      "description": "Jump directly to the training dashboard",
-      "url": "/training-app/dashboard"
+      "type": "image/png"
     }
   ]
 }
