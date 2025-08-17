@@ -1,118 +1,48 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  background: #f5f7fa;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #6dd5fa, #2980b9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-header {
-  background: #4CAF50;
-  color: white;
-  padding: 10px;
+.container {
+  width: 90%;
+  max-width: 400px;
   text-align: center;
 }
 
-nav {
+.app-title {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+}
+
+.menu-btn {
   display: flex;
-  justify-content: space-around;
-  background: #333;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 15px 20px;
+  margin: 15px 0;
+  border-radius: 20px;
+  color: #333;
+  text-decoration: none;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-nav button {
-  flex: 1;
-  padding: 10px;
-  background: #333;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-nav button:hover {
-  background: #555;
+.menu-btn i {
+  font-size: 1.5rem;
+  color: #2980b9;
 }
 
-main {
-  padding: 10px;
-}
-
-section {
-  display: none;
-}
-
-section.active {
-  display: block;
-}
-
-iframe {
-  width: 100%;
-  height: 500px;
-  border: none;
-}
-
-@media (max-width: 600px) {
-  iframe {
-    height: 300px;
-  }
-}
-
-/* Month Grid */
-
-#month-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-/* Medium screens (tablet) — 3 columns */
-@media (min-width: 600px) {
-  #month-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Large screens (desktop) — 4 columns */
-@media (min-width: 900px) {
-  #month-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-#month-grid button {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  white-space: nowrap;
-}
-
-#month-grid button:hover {
-  background: #45a049;
-}
-
-#month-grid .upcoming {
-  background: #ff9800;
-}
-
-/* Program Cards */
-
-.card {
-  background: white;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.card h3 {
-  margin-top: 0;
-  color: #4CAF50;
-}
-
-#program-list, #today-list {
-  max-width: 700px;
-  margin: 0 auto;
+.menu-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
