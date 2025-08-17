@@ -2,66 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training App</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>📚 Training App</h1>
-  </header>
+  <div class="container">
+    <h1 class="app-title">Training App</h1>
 
-  <nav>
-    <button onclick="showSection('dashboard')">Dashboard</button>
-    <button onclick="showSection('programs')">Training Programs</button>
-    <button onclick="showSection('today')">Today's Program</button>
-    <button onclick="showSection('quicklinks')">Quick Links</button>
-  </nav>
+    <a href="#" class="menu-btn">
+      <i class="fas fa-chart-line"></i>
+      <span>Training Dashboard</span>
+    </a>
 
-  <main>
-    <!-- Dashboard -->
-    <section id="dashboard" class="active">
-      <h2>Dashboard</h2>
-      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1495834553&single=true"
-              frameborder="0" scrolling="no"></iframe>
-    </section>
+    <a href="#" class="menu-btn">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Training Programs</span>
+    </a>
 
-    <!-- Training Programs -->
-    <section id="programs">
-      <h2>Training Programs</h2>
+    <a href="#" class="menu-btn">
+      <i class="fas fa-clock"></i>
+      <span>Today’s Programs</span>
+    </a>
 
-      <div id="month-grid">
-        <button onclick="showPrograms('2025-07')">Jul-25</button>
-        <button onclick="showPrograms('2025-08')">Aug-25</button>
-        <button onclick="showPrograms('2025-09')">Sep-25</button>
-        <button onclick="showPrograms('2025-10')">Oct-25</button>
-        <button onclick="showPrograms('2025-11')">Nov-25</button>
-        <button onclick="showPrograms('2025-12')">Dec-25</button>
-        <button onclick="showPrograms('2026-01')">Jan-26</button>
-        <button onclick="showPrograms('2026-02')">Feb-26</button>
-        <button onclick="showPrograms('2026-03')">Mar-26</button>
-        <button onclick="showPrograms('2026-04')">Apr-26</button>
-        <button onclick="showPrograms('2026-05')">May-26</button>
-        <button onclick="showPrograms('2026-06')">Jun-26</button>
-        <button class="upcoming" onclick="showUpcoming()">Upcoming Training Programs</button>
-      </div>
-
-      <div id="program-list">Loading programs...</div>
-    </section>
-
-    <!-- Today's Program -->
-    <section id="today">
-      <h2>Today's Program</h2>
-      <div id="today-list">Loading today's programs...</div>
-    </section>
-
-    <!-- Quick Links -->
-    <section id="quicklinks">
-      <h2>Quick Links</h2>
-      <p>Coming soon...</p>
-    </section>
-  </main>
-
-  <script src="script.js"></script>
+    <a href="#" class="menu-btn">
+      <i class="fas fa-link"></i>
+      <span>Quick Links</span>
+    </a>
+  </div>
 </body>
 </html>
