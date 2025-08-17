@@ -1,48 +1,40 @@
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #6dd5fa, #2980b9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #89f7fe, #2193b0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .container {
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 350px;
 }
 
-.app-title {
-  color: white;
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+.card {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.menu-btn {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 15px;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 15px 20px;
-  margin: 15px 0;
-  border-radius: 20px;
-  color: #333;
-  text-decoration: none;
-  font-size: 1.1rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+.card:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.3);
 }
 
-.menu-btn i {
-  font-size: 1.5rem;
-  color: #2980b9;
-}
-
-.menu-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+.icon {
+    font-size: 2em;
+    margin-bottom: 10px;
 }
