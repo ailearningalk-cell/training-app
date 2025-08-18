@@ -11,17 +11,19 @@
 </head>
 <body>
 
-<a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&amp;single=true&amp;widget=true&amp;headers=false" 
-   target="_blank" 
-   style="text-decoration: none;">
+<div class="card" onclick="openDashboard()" 
+     style="cursor: pointer; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: 0.3s;">
+    <i class="fas fa-chart-line icon" style="font-size: 24px; color: #2196f3; margin-bottom: 8px;"></i>
+    <span style="font-weight: bold; font-size: 18px; display:block;">
+        Training Dashboard
+    </span>
+</div>
 
-    <div class="card" style="cursor: pointer; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: 0.3s;">
-        <i class="fas fa-chart-line icon" style="font-size: 24px; color: #2196f3; margin-bottom: 8px;"></i>
-        <span style="font-weight: bold; font-size: 18px; display:block;">
-            Training Dashboard
-        </span>
-    </div>
-</a>
+<script>
+  function openDashboard() {
+    window.location.href = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false";
+  }
+</script>
     
     
 
