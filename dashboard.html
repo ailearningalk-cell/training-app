@@ -10,15 +10,13 @@
             box-sizing: border-box;
         }
         body {
+            font-family: Arial, sans-serif;
+            background: #f5f9fc;
+            padding: 50px 10px 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 10px;
-            font-family: Arial, sans-serif;
-            background: #f5f9fc;
-            position: relative;
-            width: 100%;
         }
         .back-btn {
             position: fixed;
@@ -34,38 +32,32 @@
             font-size: 14px;
         }
         h1 {
-            margin: 40px 0 15px 0;
             color: #2c3e50;
             font-size: 18px;
             text-align: center;
+            margin-bottom: 15px;
             width: 100%;
         }
-        .charts-container {
+        .dashboard-container {
             width: 100%;
             max-width: 348px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
         }
-        .chart-wrapper {
+        .chart-container {
             width: 100%;
+            margin-bottom: 10px;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background: white;
             border-radius: 6px;
             overflow: hidden;
         }
-        .half-charts-container {
+        .half-container {
             display: flex;
-            width: 100%;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
         .half-chart {
             flex: 1;
-            min-width: 0;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background: white;
             border-radius: 6px;
             overflow: hidden;
@@ -74,94 +66,48 @@
             width: 100%;
             display: block;
             border: none;
-            overflow: hidden !important;
         }
-        
-        /* Set minimum heights to ensure content isn't cut off */
-        .chart1 { min-height: 380px; }
-        .chart2 { min-height: 215px; }
-        .chart3, .chart4 { min-height: 56px; }
-        .chart5 { min-height: 56px; }
-
-        @media (max-width: 400px) {
-            h1 {
-                margin-top: 30px;
-                font-size: 16px;
-            }
-            /* Allow vertical scrolling on mobile */
-            body {
-                overflow-y: auto;
-                height: auto;
-                min-height: 100vh;
-            }
-        }
+        /* Natural chart dimensions */
+        .chart1 { height: 380px; }
+        .chart2 { height: 215px; }
+        .chart3, .chart4 { height: 56px; }
+        .chart5 { height: 56px; }
     </style>
 </head>
 <body>
     <button class="back-btn" onclick="window.history.back()">← Back</button>
     <h1>Training Progress</h1>
 
-    <div class="charts-container">
+    <div class="dashboard-container">
         <!-- Chart 1 -->
-        <div class="chart-wrapper chart1">
-            <iframe scrolling="no"
-                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
-                    loading="lazy">
-            </iframe>
+        <div class="chart-container chart1">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+                    loading="lazy"></iframe>
         </div>
 
         <!-- Chart 2 -->
-        <div class="chart-wrapper chart2">
-            <iframe scrolling="no"
-                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
-                    loading="lazy">
-            </iframe>
+        <div class="chart-container chart2">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+                    loading="lazy"></iframe>
         </div>
 
         <!-- Charts 3 & 4 -->
-        <div class="half-charts-container">
+        <div class="half-container">
             <div class="half-chart chart3">
-                <iframe scrolling="no"
-                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
-                        loading="lazy">
-                </iframe>
+                <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+                        loading="lazy"></iframe>
             </div>
             <div class="half-chart chart4">
-                <iframe scrolling="no"
-                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
-                        loading="lazy">
-                </iframe>
+                <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+                        loading="lazy"></iframe>
             </div>
         </div>
 
         <!-- Chart 5 -->
-        <div class="chart-wrapper chart5">
-            <iframe scrolling="no"
-                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
-                    loading="lazy">
-            </iframe>
+        <div class="chart-container chart5">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+                    loading="lazy"></iframe>
         </div>
     </div>
-
-    <script>
-        // Function to ensure proper sizing
-        function adjustLayout() {
-            const viewportHeight = window.innerHeight;
-            const contentHeight = document.querySelector('.charts-container').scrollHeight;
-            const headerHeight = document.querySelector('h1').offsetHeight;
-            const backButtonHeight = document.querySelector('.back-btn').offsetHeight;
-            
-            // If content is taller than viewport (especially on mobile)
-            if (contentHeight + headerHeight + backButtonHeight + 30 > viewportHeight) {
-                document.body.style.overflowY = 'auto';
-            } else {
-                document.body.style.overflowY = 'hidden';
-            }
-        }
-        
-        // Run on load and resize
-        window.addEventListener('load', adjustLayout);
-        window.addEventListener('resize', adjustLayout);
-    </script>
 </body>
 </html>
