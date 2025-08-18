@@ -2,74 +2,93 @@
 <html>
 <head>
     <title>Training Charts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            margin: 10px;
+        * {
+            margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            box-sizing: border-box;
         }
-        .chart-container {
-            display: block;
-            margin: 0 0 10px 0;
-            padding: 0;
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        .chart-wrapper {
+            width: 100%;
+            max-width: 348px;
+            margin-bottom: 10px;
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .half-container {
+        .half-charts-container {
             display: flex;
-            width: 348px;
+            width: 100%;
+            max-width: 348px;
             margin-bottom: 10px;
+            gap: 10px;
         }
         .half-chart {
-            width: 173px;
+            flex: 1;
+            min-width: 0;
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .half-chart:first-child {
-            margin-right: 5px;
-        }
         iframe {
+            width: 100%;
             display: block;
+            border: none;
         }
+        /* Natural height for each chart */
+        .chart1 { aspect-ratio: 348/380; }
+        .chart2 { aspect-ratio: 348/215; }
+        .chart3, .chart4 { aspect-ratio: 173/56; }
+        .chart5 { aspect-ratio: 348/56; }
     </style>
 </head>
 <body>
     <!-- Chart 1 (348x380) -->
-    <iframe class="chart-container" 
-            width="348" 
-            height="380" 
-            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
-            frameborder="0">
-    </iframe>
-
-    <!-- Chart 2 (348x215) -->
-    <iframe class="chart-container" 
-            width="348" 
-            height="215" 
-            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
-            frameborder="0">
-    </iframe>
-
-    <!-- Charts 3 & 4 (each 173x56) -->
-    <div class="half-container">
-        <iframe class="half-chart" 
-                height="56" 
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
-                frameborder="0">
-        </iframe>
-        <iframe class="half-chart" 
-                height="56" 
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
-                frameborder="0">
+    <div class="chart-wrapper">
+        <iframe class="chart1" 
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+                loading="lazy">
         </iframe>
     </div>
 
+    <!-- Chart 2 (348x215) -->
+    <div class="chart-wrapper">
+        <iframe class="chart2" 
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+                loading="lazy">
+        </iframe>
+    </div>
+
+    <!-- Charts 3 & 4 (each 173x56) -->
+    <div class="half-charts-container">
+        <div class="half-chart">
+            <iframe class="chart3" 
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+                    loading="lazy">
+            </iframe>
+        </div>
+        <div class="half-chart">
+            <iframe class="chart4" 
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+                    loading="lazy">
+            </iframe>
+        </div>
+    </div>
+
     <!-- Chart 5 (348x56) -->
-    <iframe class="chart-container" 
-            width="348" 
-            height="56" 
-            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
-            frameborder="0">
-    </iframe>
+    <div class="chart-wrapper">
+        <iframe class="chart5" 
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+                loading="lazy">
+        </iframe>
+    </div>
 </body>
 </html>
