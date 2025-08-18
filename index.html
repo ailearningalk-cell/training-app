@@ -28,30 +28,6 @@
       font-size: 28px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-    .back-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      font-size: 22px;
-      color: white;
-      cursor: pointer;
-      display: none;
-      transition: transform 0.2s ease;
-      background: rgba(255,255,255,0.2);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      border: none;
-      outline: none;
-    }
-    .back-btn:hover {
-      transform: scale(1.1);
-      background: rgba(255,255,255,0.3);
-    }
     .container {
       display: flex;
       flex-direction: column;
@@ -72,25 +48,11 @@
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       transition: all 0.2s ease;
-      border: none;
-      outline: none;
       text-decoration: none;
     }
     .card:hover, .card:focus {
       transform: scale(1.05);
       background: rgba(255,255,255,0.3);
-    }
-    .card.active {
-      background: rgba(255,255,255,0.4);
-      font-weight: bold;
-    }
-    .hidden {
-      display: none;
-    }
-    .months-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
     }
   </style>
 </head>
@@ -101,143 +63,30 @@
     <h1>Training App</h1>
   </header>
 
-  <!-- Back button -->
-  <button class="back-btn hidden" id="backBtn" onclick="goBack()" aria-label="Go back">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-
   <!-- Main menu -->
   <div class="container" id="mainMenu">
-    <a class="card" tabindex="0" href="dashboard.html" role="button">
-      <i class="fas fa-chart-line" aria-hidden="true"></i> Training Dashboard
+    <a class="card" href="dashboard.html">
+      <i class="fas fa-chart-line"></i> Training Dashboard
     </a>
-    <div class="card" tabindex="0" onclick="openPrograms()" role="button">
-      <i class="fas fa-calendar" aria-hidden="true"></i> Training Programs
+    <a class="card" href="program.html">
+      <i class="fas fa-calendar"></i> Training Programs
+    </a>
+    <div class="card" onclick="openTodaysPrograms()">
+      <i class="fas fa-bolt"></i> Today's Programs
     </div>
-    <div class="card" tabindex="0" onclick="openTodaysPrograms()" role="button">
-      <i class="fas fa-bolt" aria-hidden="true"></i> Today's Programs
-    </div>
-    <div class="card" tabindex="0" onclick="openQuickLinks()" role="button">
-      <i class="fas fa-link" aria-hidden="true"></i> Quick Links
-    </div>
-  </div>
-
-  <!-- Training Programs page -->
-  <div class="container hidden" id="programsPage">
-    <div class="months-grid" id="monthsGrid">
-      <div class="card" tabindex="0">Jul/25</div>
-      <div class="card" tabindex="0">Aug/25</div>
-      <div class="card" tabindex="0">Sep/25</div>
-      <div class="card" tabindex="0">Oct/25</div>
-      <div class="card" tabindex="0">Nov/25</div>
-      <div class="card" tabindex="0">Dec/25</div>
-      <div class="card" tabindex="0">Jan/26</div>
-      <div class="card" tabindex="0">Feb/26</div>
-      <div class="card" tabindex="0">Mar/26</div>
-      <div class="card" tabindex="0">Apr/26</div>
-      <div class="card" tabindex="0">May/26</div>
-      <div class="card" tabindex="0">Jun/26</div>
-    </div>
-    <div class="card" tabindex="0" onclick="openUpcomingTrainings()">
-      <i class="fas fa-calendar-alt"></i> Upcoming Trainings
-    </div>
-  </div>
-
-  <!-- Today's Programs page -->
-  <div class="container hidden" id="todaysProgramsPage">
-    <div class="card">
-      <i class="fas fa-info-circle"></i> Today's programs will appear here
-    </div>
-  </div>
-
-  <!-- Quick Links page -->
-  <div class="container hidden" id="quickLinksPage">
-    <div class="card">
-      <i class="fas fa-link"></i> Resource Link 1
-    </div>
-    <div class="card">
-      <i class="fas fa-link"></i> Resource Link 2
-    </div>
-    <div class="card">
-      <i class="fas fa-link"></i> Resource Link 3
+    <div class="card" onclick="openQuickLinks()">
+      <i class="fas fa-link"></i> Quick Links
     </div>
   </div>
 
   <script>
-    // DOM Elements
-    const backBtn = document.getElementById("backBtn");
-    const mainMenu = document.getElementById("mainMenu");
-    const programsPage = document.getElementById("programsPage");
-    const todaysProgramsPage = document.getElementById("todaysProgramsPage");
-    const quickLinksPage = document.getElementById("quickLinksPage");
-    const monthsGrid = document.getElementById("monthsGrid");
-
-    // Navigation functions
-    function openPrograms() {
-      hideAllPages();
-      programsPage.classList.remove("hidden");
-      backBtn.classList.remove("hidden");
-    }
-
     function openTodaysPrograms() {
-      hideAllPages();
-      todaysProgramsPage.classList.remove("hidden");
-      backBtn.classList.remove("hidden");
+      alert("Today's programs feature will open here.");
     }
-
     function openQuickLinks() {
-      hideAllPages();
-      quickLinksPage.classList.remove("hidden");
-      backBtn.classList.remove("hidden");
+      alert("Quick Links feature will open here.");
     }
-
-    function openUpcomingTrainings() {
-      alert("Upcoming trainings feature will be implemented here");
-    }
-
-    function goBack() {
-      hideAllPages();
-      mainMenu.classList.remove("hidden");
-      backBtn.classList.add("hidden");
-    }
-
-    function hideAllPages() {
-      document.querySelectorAll('.container').forEach(page => {
-        if (page.id !== "mainMenu") {
-          page.classList.add("hidden");
-        }
-      });
-    }
-
-    // Month selection functionality
-    monthsGrid.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', function() {
-        // Remove active class from all
-        monthsGrid.querySelectorAll('.card').forEach(c => {
-          c.classList.remove('active');
-        });
-        // Add to clicked
-        this.classList.add('active');
-        // Here you would typically load data for the selected month
-        console.log('Selected month:', this.textContent);
-      });
-      
-      // Handle keyboard navigation
-      card.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          this.click();
-        }
-      });
-    });
-
-    // Handle keyboard navigation for main cards
-    document.querySelectorAll('[role="button"]').forEach(btn => {
-      btn.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          this.click();
-        }
-      });
-    });
   </script>
+
 </body>
 </html>
