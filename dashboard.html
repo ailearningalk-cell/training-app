@@ -14,39 +14,47 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             font-family: Arial, sans-serif;
             background: #f5f9fc;
             position: relative;
         }
         .back-btn {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 8px 12px;
+            top: 15px;
+            left: 15px;
+            padding: 6px 10px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             cursor: pointer;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             z-index: 10;
+            font-size: 14px;
+        }
+        h1 {
+            margin: 10px 0 15px;
+            color: #2c3e50;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
         }
         .chart-wrapper {
             width: 100%;
             max-width: 348px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border: 1px solid #e0e0e0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background: white;
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
         }
         .half-charts-container {
             display: flex;
             width: 100%;
             max-width: 348px;
-            margin-bottom: 15px;
-            gap: 10px;
+            margin-bottom: 12px;
+            gap: 8px;
         }
         .half-chart {
             flex: 1;
@@ -54,40 +62,39 @@
             border: 1px solid #e0e0e0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background: white;
-            border-radius: 8px;
+            border-radius: 6px;
             overflow: hidden;
         }
         iframe {
             width: 100%;
             display: block;
             border: none;
+            overflow: hidden !important;
         }
         /* Natural height for each chart */
-        .chart1 { aspect-ratio: 348/380; }
-        .chart2 { aspect-ratio: 348/215; }
-        .chart3, .chart4 { aspect-ratio: 173/56; }
-        .chart5 { aspect-ratio: 348/56; }
-        h1 {
-            margin: 20px 0;
-            color: #2c3e50;
-            font-size: 24px;
-        }
+        .chart1 { height: 380px; }
+        .chart2 { height: 215px; }
+        .chart3, .chart4 { height: 56px; }
+        .chart5 { height: 56px; }
         @media (max-width: 400px) {
             .half-charts-container {
-                flex-direction: column;
+                flex-direction: row; /* Keep side by side on mobile */
             }
-            .half-chart {
-                width: 100%;
+            .chart1 { height: 300px; }
+            .chart2 { height: 180px; }
+            body {
+                padding: 10px;
             }
         }
     </style>
 </head>
 <body>
     <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Training Progress</h1>
 
     <!-- Chart 1 (348x380) -->
     <div class="chart-wrapper">
-        <iframe class="chart1" 
+        <iframe class="chart1" scrolling="no"
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
                 loading="lazy">
         </iframe>
@@ -95,7 +102,7 @@
 
     <!-- Chart 2 (348x215) -->
     <div class="chart-wrapper">
-        <iframe class="chart2" 
+        <iframe class="chart2" scrolling="no"
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
                 loading="lazy">
         </iframe>
@@ -104,13 +111,13 @@
     <!-- Charts 3 & 4 (each 173x56) -->
     <div class="half-charts-container">
         <div class="half-chart">
-            <iframe class="chart3" 
+            <iframe class="chart3" scrolling="no"
                     src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
                     loading="lazy">
             </iframe>
         </div>
         <div class="half-chart">
-            <iframe class="chart4" 
+            <iframe class="chart4" scrolling="no"
                     src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
                     loading="lazy">
             </iframe>
@@ -119,12 +126,10 @@
 
     <!-- Chart 5 (348x56) -->
     <div class="chart-wrapper">
-        <iframe class="chart5" 
+        <iframe class="chart5" scrolling="no"
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
                 loading="lazy">
         </iframe>
     </div>
-
-    <h1>Training Progress</h1>
 </body>
 </html>
