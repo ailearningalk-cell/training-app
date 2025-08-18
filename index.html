@@ -13,8 +13,20 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .back-btn {
       position: absolute;
@@ -24,12 +36,25 @@
       color: white;
       cursor: pointer;
       display: none;
+      transition: transform 0.2s ease;
+      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .back-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.3);
     }
     .container {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      width: 80%;
+      width: 100%;
       max-width: 350px;
     }
     .card {
@@ -44,10 +69,17 @@
       gap: 15px;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      transition: transform 0.2s ease;
+      transition: all 0.2s ease;
+      border: none;
+      outline: none;
     }
-    .card:hover {
+    .card:hover, .card:focus {
       transform: scale(1.05);
+      background: rgba(255,255,255,0.3);
+    }
+    .card.active {
+      background: rgba(255,255,255,0.4);
+      font-weight: bold;
     }
     .hidden {
       display: none;
@@ -57,76 +89,198 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .error-message {
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
+  <header>
+    <h1>Training App</h1>
+  </header>
+
   <!-- Back button -->
-  <i class="fas fa-arrow-left back-btn" id="backBtn" onclick="goBack()"></i>
+  <button class="back-btn hidden" id="backBtn" onclick="goBack()" aria-label="Go back">
+    <i class="fas fa-arrow-left"></i>
+  </button>
 
   <!-- Main menu -->
   <div class="container" id="mainMenu">
-    <div class="card" onclick="openDashboard()">
-      <i class="fas fa-chart-line"></i> Training Dashboard
+    <div class="card" tabindex="0" onclick="openDashboard()" role="button">
+      <i class="fas fa-chart-line" aria-hidden="true"></i> Training Dashboard
     </div>
-    <div class="card" onclick="openPrograms()">
-      <i class="fas fa-calendar"></i> Training Programs
+    <div class="card" tabindex="0" onclick="openPrograms()" role="button">
+      <i class="fas fa-calendar" aria-hidden="true"></i> Training Programs
     </div>
-    <div class="card">
-      <i class="fas fa-bolt"></i> Today's Programs
+    <div class="card" tabindex="0" onclick="openTodaysPrograms()" role="button">
+      <i class="fas fa-bolt" aria-hidden="true"></i> Today's Programs
     </div>
-    <div class="card">
-      <i class="fas fa-link"></i> Quick Links
+    <div class="card" tabindex="0" onclick="openQuickLinks()" role="button">
+      <i class="fas fa-link" aria-hidden="true"></i> Quick Links
     </div>
   </div>
 
   <!-- Training Dashboard page -->
   <div class="container hidden" id="dashboardPage">
-    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false"
-      width="100%" height="500px" style="border:0; border-radius:20px;"></iframe>
+    <div id="dashboardLoading" class="card">
+      <span class="loading"></span> Loading Dashboard...
+    </div>
+    <iframe 
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false"
+      width="100%" 
+      height="500px" 
+      style="border:0; border-radius:20px;"
+      onload="document.getElementById('dashboardLoading').classList.add('hidden')"
+      onerror="showDashboardError()"
+      id="dashboardFrame">
+    </iframe>
+    <div id="dashboardError" class="error-message hidden">
+      Failed to load dashboard data. Please check your connection.
+    </div>
   </div>
 
   <!-- Training Programs page -->
   <div class="container hidden" id="programsPage">
-    <div class="months-grid">
-      <div class="card">Jul/25</div>
-      <div class="card">Aug/25</div>
-      <div class="card">Sep/25</div>
-      <div class="card">Oct/25</div>
-      <div class="card">Nov/25</div>
-      <div class="card">Dec/25</div>
-      <div class="card">Jan/26</div>
-      <div class="card">Feb/26</div>
-      <div class="card">Mar/26</div>
-      <div class="card">Apr/26</div>
-      <div class="card">May/26</div>
-      <div class="card">Jun/26</div>
+    <div class="months-grid" id="monthsGrid">
+      <div class="card" tabindex="0">Jul/25</div>
+      <div class="card" tabindex="0">Aug/25</div>
+      <div class="card" tabindex="0">Sep/25</div>
+      <div class="card" tabindex="0">Oct/25</div>
+      <div class="card" tabindex="0">Nov/25</div>
+      <div class="card" tabindex="0">Dec/25</div>
+      <div class="card" tabindex="0">Jan/26</div>
+      <div class="card" tabindex="0">Feb/26</div>
+      <div class="card" tabindex="0">Mar/26</div>
+      <div class="card" tabindex="0">Apr/26</div>
+      <div class="card" tabindex="0">May/26</div>
+      <div class="card" tabindex="0">Jun/26</div>
     </div>
-    <div class="card">Upcoming Trainings</div>
+    <div class="card" tabindex="0" onclick="openUpcomingTrainings()">
+      <i class="fas fa-calendar-alt"></i> Upcoming Trainings
+    </div>
+  </div>
+
+  <!-- Today's Programs page -->
+  <div class="container hidden" id="todaysProgramsPage">
+    <div class="card">
+      <i class="fas fa-info-circle"></i> Today's programs will appear here
+    </div>
+  </div>
+
+  <!-- Quick Links page -->
+  <div class="container hidden" id="quickLinksPage">
+    <div class="card">
+      <i class="fas fa-link"></i> Resource Link 1
+    </div>
+    <div class="card">
+      <i class="fas fa-link"></i> Resource Link 2
+    </div>
+    <div class="card">
+      <i class="fas fa-link"></i> Resource Link 3
+    </div>
   </div>
 
   <script>
+    // DOM Elements
     const backBtn = document.getElementById("backBtn");
     const mainMenu = document.getElementById("mainMenu");
     const dashboardPage = document.getElementById("dashboardPage");
     const programsPage = document.getElementById("programsPage");
+    const todaysProgramsPage = document.getElementById("todaysProgramsPage");
+    const quickLinksPage = document.getElementById("quickLinksPage");
+    const monthsGrid = document.getElementById("monthsGrid");
 
+    // Navigation functions
     function openDashboard() {
-      mainMenu.classList.add("hidden");
+      hideAllPages();
       dashboardPage.classList.remove("hidden");
-      backBtn.style.display = "block";
+      backBtn.classList.remove("hidden");
     }
+
     function openPrograms() {
-      mainMenu.classList.add("hidden");
+      hideAllPages();
       programsPage.classList.remove("hidden");
-      backBtn.style.display = "block";
+      backBtn.classList.remove("hidden");
     }
+
+    function openTodaysPrograms() {
+      hideAllPages();
+      todaysProgramsPage.classList.remove("hidden");
+      backBtn.classList.remove("hidden");
+    }
+
+    function openQuickLinks() {
+      hideAllPages();
+      quickLinksPage.classList.remove("hidden");
+      backBtn.classList.remove("hidden");
+    }
+
+    function openUpcomingTrainings() {
+      alert("Upcoming trainings feature will be implemented here");
+    }
+
     function goBack() {
-      dashboardPage.classList.add("hidden");
-      programsPage.classList.add("hidden");
+      hideAllPages();
       mainMenu.classList.remove("hidden");
-      backBtn.style.display = "none";
+      backBtn.classList.add("hidden");
     }
+
+    function hideAllPages() {
+      document.querySelectorAll('.container').forEach(page => {
+        page.classList.add("hidden");
+      });
+    }
+
+    function showDashboardError() {
+      document.getElementById('dashboardLoading').classList.add('hidden');
+      document.getElementById('dashboardError').classList.remove('hidden');
+    }
+
+    // Month selection functionality
+    monthsGrid.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Remove active class from all
+        monthsGrid.querySelectorAll('.card').forEach(c => {
+          c.classList.remove('active');
+        });
+        // Add to clicked
+        this.classList.add('active');
+        // Here you would typically load data for the selected month
+        console.log('Selected month:', this.textContent);
+      });
+      
+      // Handle keyboard navigation
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          this.click();
+        }
+      });
+    });
+
+    // Handle keyboard navigation for main cards
+    document.querySelectorAll('[role="button"]').forEach(btn => {
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          this.click();
+        }
+      });
+    });
   </script>
 </body>
 </html>
