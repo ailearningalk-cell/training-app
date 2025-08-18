@@ -47,6 +47,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-bottom: 20px;
         }
         .chart-wrapper {
             width: 100%;
@@ -75,17 +76,15 @@
             display: block;
             border: none;
             overflow: hidden !important;
-            pointer-events: none;
         }
-        /* Responsive height adjustments */
+        
+        /* Initial heights - will be adjusted by JS */
         .chart1 { height: 320px; }
         .chart2 { height: 190px; }
         .chart3, .chart4 { height: 56px; }
         .chart5 { height: 56px; }
 
         @media (max-width: 400px) {
-            .chart1 { height: 280px; }
-            .chart2 { height: 160px; }
             h1 {
                 margin-top: 30px;
                 font-size: 16px;
@@ -140,23 +139,46 @@
     </div>
 
     <script>
-        // Adjust chart heights based on screen size
-        function adjustHeights() {
+        // Function to ensure all content fits on screen
+        function ensureFullVisibility() {
             const screenHeight = window.innerHeight;
+            const headerHeight = document.querySelector('h1').offsetHeight;
+            const backButtonHeight = document.querySelector('.back-btn').offsetHeight;
+            const padding = 20; // Total vertical padding
+            
+            // Calculate maximum available height for charts
+            const maxChartHeight = screenHeight - headerHeight - backButtonHeight - padding;
+            
+            // Adjust heights proportionally
             const chart1 = document.querySelector('.chart1');
             const chart2 = document.querySelector('.chart2');
             
-            // Calculate available height after accounting for other elements
-            const availableHeight = screenHeight - 120; // 120px for header, padding, etc
+            // Original ratio is approximately 380:215 (Chart1:Chart2)
+            const totalOriginalHeight = 380 + 215 + 56 + 56; // Charts 1-4
+            const availableHeight = maxChartHeight - 112; // Subtract heights of Charts 3-5
             
-            // Distribute height proportionally between chart1 and chart2
-            chart1.style.height = Math.min(320, availableHeight * 0.65) + 'px';
-            chart2.style.height = Math.min(190, availableHeight * 0.35) + 'px';
+            // Calculate new heights maintaining original proportions
+            const chart1Height = Math.min(380, (380 / totalOriginalHeight) * availableHeight);
+            const chart2Height = Math.min(215, (215 / totalOriginalHeight) * availableHeight);
+            
+            // Apply the calculated heights
+            chart1.style.height = chart1Height + 'px';
+            chart2.style.height = chart2Height + 'px';
+            
+            console.log('Adjusted heights:', {
+                screenHeight,
+                maxChartHeight,
+                chart1Height,
+                chart2Height
+            });
         }
         
         // Run on load and resize
-        window.addEventListener('load', adjustHeights);
-        window.addEventListener('resize', adjustHeights);
+        window.addEventListener('load', ensureFullVisibility);
+        window.addEventListener('resize', ensureFullVisibility);
+        
+        // Also run after a short delay to catch any late rendering
+        setTimeout(ensureFullVisibility, 500);
     </script>
 </body>
 </html>
