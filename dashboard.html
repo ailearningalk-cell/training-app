@@ -1,1 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Training Dashboard</title>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root{
+      --page-pad: 18px;
+      --card-radius: 20px;
+      --shadow: 0 10px 25px rgba(0,0,0,.18);
+      --glass: rgba(255,255,255,.18);
+      --chart-gap: 18px;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg, #6ad7e5 0%, #43b3cc 40%, #39a3bf 100%);
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .wrap {
+      min-height: 100%;
+      padding: calc(var(--page-pad) + 36px) var(--page-pad) var(--page-pad);
+      box-sizing: border-box;
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
+    /* Back button */
+    .back {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .back:active { transform: translateY(1px); }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 14px;
+      letter-spacing: .3px;
+    }
+    .subtitle {
+      opacity: .9;
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    /* Glassy chart cards */
+    .chart {
+      background: var(--glass);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      margin-bottom: var(--chart-gap);
+    }
+
+    /* Responsive iframe using ratio box (works well in Android WebView) */
+    .ratio {
+      position: relative;
+      width: 100%;
+      /* 16:9 by default; tweak if your charts are taller */
+      padding-top: 56.25%;
+    }
+    .ratio > iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Small heading strip for each chart (optional) */
+    .chart-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      font-weight: 600;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+    }
+    .chart-head i { opacity: .9; }
+
+    /* Make page scroll smoothly */
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+
+  <!-- Back to previous page inside WebView -->
+  <a class="back" onclick="history.back()">
+    <i class="fa-solid fa-arrow-left"></i> Back
+  </a>
+
+  <div class="wrap">
+    <h1>Training Dashboard</h1>
+    <div class="subtitle">Live charts (responsive, no Google Sheets chrome)</div>
+
+    <!-- Chart 1 -->
+    <section class="chart" id="chart1">
+      <div class="chart-head"><i class="fa-solid fa-chart-line"></i> Chart 1</div>
+      <div class="ratio">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <!-- Chart 2 -->
+    <section class="chart" id="chart2">
+      <div class="chart-head"><i class="fa-solid fa-chart-line"></i> Chart 2</div>
+      <div class="ratio">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <!-- Chart 3 -->
+    <section class="chart" id="chart3">
+      <div class="chart-head"><i class="fa-solid fa-chart-line"></i> Chart 3</div>
+      <div class="ratio">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <!-- Chart 4 -->
+    <section class="chart" id="chart4">
+      <div class="chart-head"><i class="fa-solid fa-chart-line"></i> Chart 4</div>
+      <div class="ratio">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <!-- Chart 5 -->
+    <section class="chart" id="chart5">
+      <div class="chart-head"><i class="fa-solid fa-chart-line"></i> Chart 5</div>
+      <div class="ratio">
+        <iframe
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>
