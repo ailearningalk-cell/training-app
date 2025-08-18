@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Programs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f6fa;
+    }
+    h2 { margin-bottom: 20px; }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <h2>Training Programs</h2>
+  <div class="container">
+    <div class="card" onclick="openMonth('jul25.html')">Jul/25</div>
+    <div class="card" onclick="openMonth('aug25.html')">Aug/25</div>
+    <div class="card" onclick="openMonth('sep25.html')">Sep/25</div>
+    <div class="card" onclick="openMonth('oct25.html')">Oct/25</div>
+    <div class="card" onclick="openMonth('nov25.html')">Nov/25</div>
+    <div class="card" onclick="openMonth('dec25.html')">Dec/25</div>
+    <div class="card" onclick="openMonth('jan26.html')">Jan/26</div>
+    <div class="card" onclick="openMonth('feb26.html')">Feb/26</div>
+    <div class="card" onclick="openMonth('mar26.html')">Mar/26</div>
+    <div class="card" onclick="openMonth('apr26.html')">Apr/26</div>
+    <div class="card" onclick="openMonth('may26.html')">May/26</div>
+    <div class="card" onclick="openMonth('jun26.html')">Jun/26</div>
+    <div class="card" onclick="openMonth('upcoming.html')">Upcoming Trainings</div>
+  </div>
+
+  <script>
+    function openMonth(page) {
+      window.location.href = page;
+    }
+  </script>
+</body>
+</html>
 
