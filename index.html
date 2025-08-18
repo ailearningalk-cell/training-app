@@ -45,6 +45,8 @@
       justify-content: center;
       align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: none;
+      outline: none;
     }
     .back-btn:hover {
       transform: scale(1.1);
@@ -72,6 +74,7 @@
       transition: all 0.2s ease;
       border: none;
       outline: none;
+      text-decoration: none;
     }
     .card:hover, .card:focus {
       transform: scale(1.05);
@@ -89,23 +92,6 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 1s ease-in-out infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .error-message {
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
   </style>
 </head>
 <body>
@@ -122,9 +108,9 @@
 
   <!-- Main menu -->
   <div class="container" id="mainMenu">
-    <div class="card" tabindex="0" onclick="openDashboard()" role="button">
+    <a class="card" tabindex="0" href="dashboard.html" role="button">
       <i class="fas fa-chart-line" aria-hidden="true"></i> Training Dashboard
-    </div>
+    </a>
     <div class="card" tabindex="0" onclick="openPrograms()" role="button">
       <i class="fas fa-calendar" aria-hidden="true"></i> Training Programs
     </div>
@@ -133,25 +119,6 @@
     </div>
     <div class="card" tabindex="0" onclick="openQuickLinks()" role="button">
       <i class="fas fa-link" aria-hidden="true"></i> Quick Links
-    </div>
-  </div>
-
-  <!-- Training Dashboard page -->
-  <div class="container hidden" id="dashboardPage">
-    <div id="dashboardLoading" class="card">
-      <span class="loading"></span> Loading Dashboard...
-    </div>
-    <iframe 
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false"
-      width="100%" 
-      height="500px" 
-      style="border:0; border-radius:20px;"
-      onload="document.getElementById('dashboardLoading').classList.add('hidden')"
-      onerror="showDashboardError()"
-      id="dashboardFrame">
-    </iframe>
-    <div id="dashboardError" class="error-message hidden">
-      Failed to load dashboard data. Please check your connection.
     </div>
   </div>
 
@@ -200,19 +167,12 @@
     // DOM Elements
     const backBtn = document.getElementById("backBtn");
     const mainMenu = document.getElementById("mainMenu");
-    const dashboardPage = document.getElementById("dashboardPage");
     const programsPage = document.getElementById("programsPage");
     const todaysProgramsPage = document.getElementById("todaysProgramsPage");
     const quickLinksPage = document.getElementById("quickLinksPage");
     const monthsGrid = document.getElementById("monthsGrid");
 
     // Navigation functions
-    function openDashboard() {
-      hideAllPages();
-      dashboardPage.classList.remove("hidden");
-      backBtn.classList.remove("hidden");
-    }
-
     function openPrograms() {
       hideAllPages();
       programsPage.classList.remove("hidden");
@@ -243,13 +203,10 @@
 
     function hideAllPages() {
       document.querySelectorAll('.container').forEach(page => {
-        page.classList.add("hidden");
+        if (page.id !== "mainMenu") {
+          page.classList.add("hidden");
+        }
       });
-    }
-
-    function showDashboardError() {
-      document.getElementById('dashboardLoading').classList.add('hidden');
-      document.getElementById('dashboardError').classList.remove('hidden');
     }
 
     // Month selection functionality
