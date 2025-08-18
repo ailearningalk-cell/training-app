@@ -1,47 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Training Dashboard</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+    <title>Training Charts</title>
+    <style>
+        .chart-container {
+            display: block;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+        .half-container {
+            display: flex;
+            width: 348px;
+        }
+        .half-chart {
+            width: 173px;
+        }
+    </style>
 </head>
 <body>
-  <div class="back-btn" onclick="window.history.back()">
-    <i class="fas fa-arrow-left"></i>
-  </div>
+    <!-- Chart 1 (348x380) -->
+    <iframe class="chart-container" 
+            width="348" 
+            height="380" 
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+            frameborder="0">
+    </iframe>
 
-  <div class="dashboard-container">
-    <!-- Chart 1 -->
-    <div class="chart-wrapper">
-      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive" 
-             loading="lazy"></iframe>
+    <!-- Chart 2 (348x215) -->
+    <iframe class="chart-container" 
+            width="348" 
+            height="215" 
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+            frameborder="0">
+    </iframe>
+
+    <!-- Charts 3 & 4 (each 173x56) -->
+    <div class="half-container">
+        <iframe class="half-chart" 
+                height="56" 
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+                frameborder="0">
+        </iframe>
+        <iframe class="half-chart" 
+                height="56" 
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+                frameborder="0">
+        </iframe>
     </div>
 
-    <!-- Chart 2 -->
-    <div class="chart-wrapper">
-      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive" 
-             loading="lazy"></iframe>
-    </div>
-
-    <!-- Charts 3 & 4 Side by Side -->
-    <div class="half-charts-container">
-      <div class="chart-wrapper half-chart">
-        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive" 
-               loading="lazy"></iframe>
-      </div>
-      <div class="chart-wrapper half-chart">
-        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive" 
-               loading="lazy"></iframe>
-      </div>
-    </div>
-
-    <!-- Chart 5 -->
-    <div class="chart-wrapper">
-      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive" 
-             loading="lazy"></iframe>
-    </div>
-  </div>
+    <!-- Chart 5 (348x56) -->
+    <iframe class="chart-container" 
+            width="348" 
+            height="56" 
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+            frameborder="0">
+    </iframe>
 </body>
 </html>
