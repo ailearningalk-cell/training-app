@@ -14,44 +14,68 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             font-family: Arial, sans-serif;
-            overflow-x: hidden;
+            background: #f4f7fb; /* light background */
+            overflow-x: hidden; /* no horizontal scroll */
         }
-        .chart-wrapper {
+        .chart-wrapper, .half-chart {
             width: 100%;
             max-width: 348px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
         }
         .half-charts-container {
             display: flex;
             width: 100%;
             max-width: 348px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             gap: 10px;
-        }
-        .half-chart {
-            flex: 1;
-            min-width: 0;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         iframe {
             width: 100%;
             display: block;
             border: none;
+            overflow: hidden; /* prevents iframe scrollbars */
         }
         /* Natural height for each chart */
         .chart1 { aspect-ratio: 348/380; }
         .chart2 { aspect-ratio: 348/215; }
         .chart3, .chart4 { aspect-ratio: 173/56; }
         .chart5 { aspect-ratio: 348/56; }
+
+        /* Footer section */
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        .footer h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2196f3;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.2s ease;
+        }
+        .back-btn:hover {
+            background: #1976d2;
+        }
     </style>
 </head>
 <body>
-    <!-- Chart 1 (348x380) -->
+    <!-- Chart 1 -->
     <div class="chart-wrapper">
         <iframe class="chart1" 
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
@@ -59,7 +83,7 @@
         </iframe>
     </div>
 
-    <!-- Chart 2 (348x215) -->
+    <!-- Chart 2 -->
     <div class="chart-wrapper">
         <iframe class="chart2" 
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
@@ -67,7 +91,7 @@
         </iframe>
     </div>
 
-    <!-- Charts 3 & 4 (each 173x56) -->
+    <!-- Charts 3 & 4 -->
     <div class="half-charts-container">
         <div class="half-chart">
             <iframe class="chart3" 
@@ -83,12 +107,18 @@
         </div>
     </div>
 
-    <!-- Chart 5 (348x56) -->
+    <!-- Chart 5 -->
     <div class="chart-wrapper">
         <iframe class="chart5" 
                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
                 loading="lazy">
         </iframe>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <h2>Training Progress</h2>
+        <a href="javascript:history.back()" class="back-btn">← Back</a>
     </div>
 </body>
 </html>
