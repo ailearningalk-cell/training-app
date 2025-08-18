@@ -44,7 +44,7 @@
         }
         .container {
             width: 100%;
-            max-width: 1000px; /* expand on desktop */
+            max-width: 600px; /* keep charts nicely centered */
             padding: 12px;
         }
         .chart-wrapper,
@@ -58,11 +58,17 @@
         }
         .half-charts-container {
             display: flex;
+            justify-content: center; /* center on desktop */
             gap: 12px;
-            flex-wrap: wrap; /* allows stacking on small screens */
+            flex-wrap: wrap;
+        }
+        .half-chart {
+            flex: 1;
+            min-width: 260px;
+            max-width: 290px;
         }
         iframe {
-            width: 102%;   /* little oversize to remove inner scrollbars */
+            width: 102%;   /* oversize to hide scrollbars */
             height: 100%;
             border: none;
             display: block;
@@ -77,6 +83,9 @@
         @media (max-width: 600px) {
             .half-charts-container {
                 flex-direction: column;
+            }
+            .half-chart {
+                max-width: 100%;
             }
         }
     </style>
