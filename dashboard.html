@@ -16,20 +16,17 @@
             min-height: 100vh;
             font-family: Arial, sans-serif;
             overflow-x: hidden;
-            background: #f4f7fa; /* light grayish background */
+            background: #f4f7fa;
         }
         header {
-            position: sticky;
-            top: 0;
-            background: #2196f3;
-            color: white;
             width: 100%;
             padding: 12px 16px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #2196f3;
+            color: white;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            z-index: 10;
         }
         header h1 {
             flex: 1;
@@ -47,7 +44,7 @@
         }
         .container {
             width: 100%;
-            max-width: 380px;
+            max-width: 1000px; /* expand on desktop */
             padding: 12px;
         }
         .chart-wrapper,
@@ -56,25 +53,32 @@
             border: 1px solid #e0e0e0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 12px;
-            overflow: hidden; /* removes iframe scrollbars */
+            overflow: hidden;
             border-radius: 6px;
         }
         .half-charts-container {
             display: flex;
             gap: 12px;
+            flex-wrap: wrap; /* allows stacking on small screens */
         }
         iframe {
-            width: 100%;
+            width: 102%;   /* little oversize to remove inner scrollbars */
             height: 100%;
             border: none;
             display: block;
             overflow: hidden;
         }
-        /* Aspect ratios to match chart proportions */
+        /* Aspect ratios */
         .chart1 { aspect-ratio: 348/380; }
         .chart2 { aspect-ratio: 348/215; }
         .chart3, .chart4 { aspect-ratio: 173/56; }
         .chart5 { aspect-ratio: 348/56; }
+
+        @media (max-width: 600px) {
+            .half-charts-container {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
