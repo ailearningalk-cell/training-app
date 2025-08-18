@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Training Progress</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
             margin: 0;
@@ -19,7 +19,6 @@
             background: #f5f9fc;
             position: relative;
             width: 100%;
-            overflow-x: hidden;
         }
         .back-btn {
             position: fixed;
@@ -78,16 +77,22 @@
             overflow: hidden !important;
         }
         
-        /* Initial heights - will be adjusted by JS */
-        .chart1 { height: 320px; }
-        .chart2 { height: 190px; }
-        .chart3, .chart4 { height: 56px; }
-        .chart5 { height: 56px; }
+        /* Set minimum heights to ensure content isn't cut off */
+        .chart1 { min-height: 380px; }
+        .chart2 { min-height: 215px; }
+        .chart3, .chart4 { min-height: 56px; }
+        .chart5 { min-height: 56px; }
 
         @media (max-width: 400px) {
             h1 {
                 margin-top: 30px;
                 font-size: 16px;
+            }
+            /* Allow vertical scrolling on mobile */
+            body {
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
             }
         }
     </style>
@@ -139,46 +144,24 @@
     </div>
 
     <script>
-        // Function to ensure all content fits on screen
-        function ensureFullVisibility() {
-            const screenHeight = window.innerHeight;
+        // Function to ensure proper sizing
+        function adjustLayout() {
+            const viewportHeight = window.innerHeight;
+            const contentHeight = document.querySelector('.charts-container').scrollHeight;
             const headerHeight = document.querySelector('h1').offsetHeight;
             const backButtonHeight = document.querySelector('.back-btn').offsetHeight;
-            const padding = 20; // Total vertical padding
             
-            // Calculate maximum available height for charts
-            const maxChartHeight = screenHeight - headerHeight - backButtonHeight - padding;
-            
-            // Adjust heights proportionally
-            const chart1 = document.querySelector('.chart1');
-            const chart2 = document.querySelector('.chart2');
-            
-            // Original ratio is approximately 380:215 (Chart1:Chart2)
-            const totalOriginalHeight = 380 + 215 + 56 + 56; // Charts 1-4
-            const availableHeight = maxChartHeight - 112; // Subtract heights of Charts 3-5
-            
-            // Calculate new heights maintaining original proportions
-            const chart1Height = Math.min(380, (380 / totalOriginalHeight) * availableHeight);
-            const chart2Height = Math.min(215, (215 / totalOriginalHeight) * availableHeight);
-            
-            // Apply the calculated heights
-            chart1.style.height = chart1Height + 'px';
-            chart2.style.height = chart2Height + 'px';
-            
-            console.log('Adjusted heights:', {
-                screenHeight,
-                maxChartHeight,
-                chart1Height,
-                chart2Height
-            });
+            // If content is taller than viewport (especially on mobile)
+            if (contentHeight + headerHeight + backButtonHeight + 30 > viewportHeight) {
+                document.body.style.overflowY = 'auto';
+            } else {
+                document.body.style.overflowY = 'hidden';
+            }
         }
         
         // Run on load and resize
-        window.addEventListener('load', ensureFullVisibility);
-        window.addEventListener('resize', ensureFullVisibility);
-        
-        // Also run after a short delay to catch any late rendering
-        setTimeout(ensureFullVisibility, 500);
+        window.addEventListener('load', adjustLayout);
+        window.addEventListener('resize', adjustLayout);
     </script>
 </body>
 </html>
