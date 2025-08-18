@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Training Charts</title>
+    <title>Training Progress</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
@@ -16,27 +16,46 @@
             min-height: 100vh;
             padding: 20px;
             font-family: Arial, sans-serif;
-            overflow-x: hidden;
+            background: #f5f9fc;
+            position: relative;
+        }
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 10;
         }
         .chart-wrapper {
             width: 100%;
             max-width: 348px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
         }
         .half-charts-container {
             display: flex;
             width: 100%;
             max-width: 348px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             gap: 10px;
         }
         .half-chart {
             flex: 1;
             min-width: 0;
             border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
         }
         iframe {
             width: 100%;
@@ -48,9 +67,24 @@
         .chart2 { aspect-ratio: 348/215; }
         .chart3, .chart4 { aspect-ratio: 173/56; }
         .chart5 { aspect-ratio: 348/56; }
+        h1 {
+            margin: 20px 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        @media (max-width: 400px) {
+            .half-charts-container {
+                flex-direction: column;
+            }
+            .half-chart {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+
     <!-- Chart 1 (348x380) -->
     <div class="chart-wrapper">
         <iframe class="chart1" 
@@ -90,5 +124,7 @@
                 loading="lazy">
         </iframe>
     </div>
+
+    <h1>Training Progress</h1>
 </body>
 </html>
