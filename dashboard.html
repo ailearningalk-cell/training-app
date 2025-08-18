@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Training Progress</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
         * {
             margin: 0;
@@ -14,15 +14,17 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 15px;
+            padding: 10px;
             font-family: Arial, sans-serif;
             background: #f5f9fc;
             position: relative;
+            width: 100%;
+            overflow-x: hidden;
         }
         .back-btn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
+            position: fixed;
+            top: 10px;
+            left: 10px;
             padding: 6px 10px;
             background: #ffffff;
             border: 1px solid #e0e0e0;
@@ -33,16 +35,21 @@
             font-size: 14px;
         }
         h1 {
-            margin: 10px 0 15px;
+            margin: 40px 0 15px 0;
             color: #2c3e50;
             font-size: 18px;
             text-align: center;
             width: 100%;
         }
-        .chart-wrapper {
+        .charts-container {
             width: 100%;
             max-width: 348px;
-            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chart-wrapper {
+            width: 100%;
             border: 1px solid #e0e0e0;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             background: white;
@@ -52,8 +59,6 @@
         .half-charts-container {
             display: flex;
             width: 100%;
-            max-width: 348px;
-            margin-bottom: 12px;
             gap: 8px;
         }
         .half-chart {
@@ -70,20 +75,20 @@
             display: block;
             border: none;
             overflow: hidden !important;
+            pointer-events: none;
         }
-        /* Natural height for each chart */
-        .chart1 { height: 380px; }
-        .chart2 { height: 215px; }
+        /* Responsive height adjustments */
+        .chart1 { height: 320px; }
+        .chart2 { height: 190px; }
         .chart3, .chart4 { height: 56px; }
         .chart5 { height: 56px; }
+
         @media (max-width: 400px) {
-            .half-charts-container {
-                flex-direction: row; /* Keep side by side on mobile */
-            }
-            .chart1 { height: 300px; }
-            .chart2 { height: 180px; }
-            body {
-                padding: 10px;
+            .chart1 { height: 280px; }
+            .chart2 { height: 160px; }
+            h1 {
+                margin-top: 30px;
+                font-size: 16px;
             }
         }
     </style>
@@ -92,44 +97,66 @@
     <button class="back-btn" onclick="window.history.back()">← Back</button>
     <h1>Training Progress</h1>
 
-    <!-- Chart 1 (348x380) -->
-    <div class="chart-wrapper">
-        <iframe class="chart1" scrolling="no"
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
-                loading="lazy">
-        </iframe>
-    </div>
-
-    <!-- Chart 2 (348x215) -->
-    <div class="chart-wrapper">
-        <iframe class="chart2" scrolling="no"
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
-                loading="lazy">
-        </iframe>
-    </div>
-
-    <!-- Charts 3 & 4 (each 173x56) -->
-    <div class="half-charts-container">
-        <div class="half-chart">
-            <iframe class="chart3" scrolling="no"
-                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+    <div class="charts-container">
+        <!-- Chart 1 -->
+        <div class="chart-wrapper chart1">
+            <iframe scrolling="no"
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
                     loading="lazy">
             </iframe>
         </div>
-        <div class="half-chart">
-            <iframe class="chart4" scrolling="no"
-                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+
+        <!-- Chart 2 -->
+        <div class="chart-wrapper chart2">
+            <iframe scrolling="no"
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+                    loading="lazy">
+            </iframe>
+        </div>
+
+        <!-- Charts 3 & 4 -->
+        <div class="half-charts-container">
+            <div class="half-chart chart3">
+                <iframe scrolling="no"
+                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+                        loading="lazy">
+                </iframe>
+            </div>
+            <div class="half-chart chart4">
+                <iframe scrolling="no"
+                        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+                        loading="lazy">
+                </iframe>
+            </div>
+        </div>
+
+        <!-- Chart 5 -->
+        <div class="chart-wrapper chart5">
+            <iframe scrolling="no"
+                    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
                     loading="lazy">
             </iframe>
         </div>
     </div>
 
-    <!-- Chart 5 (348x56) -->
-    <div class="chart-wrapper">
-        <iframe class="chart5" scrolling="no"
-                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
-                loading="lazy">
-        </iframe>
-    </div>
+    <script>
+        // Adjust chart heights based on screen size
+        function adjustHeights() {
+            const screenHeight = window.innerHeight;
+            const chart1 = document.querySelector('.chart1');
+            const chart2 = document.querySelector('.chart2');
+            
+            // Calculate available height after accounting for other elements
+            const availableHeight = screenHeight - 120; // 120px for header, padding, etc
+            
+            // Distribute height proportionally between chart1 and chart2
+            chart1.style.height = Math.min(320, availableHeight * 0.65) + 'px';
+            chart2.style.height = Math.min(190, availableHeight * 0.35) + 'px';
+        }
+        
+        // Run on load and resize
+        window.addEventListener('load', adjustHeights);
+        window.addEventListener('resize', adjustHeights);
+    </script>
 </body>
 </html>
