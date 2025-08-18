@@ -1,50 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Training Hub</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <meta name="theme-color" content="#2193b0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Hub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f6fa;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .icon {
+      font-size: 30px;
+      margin-bottom: 10px;
+      color: #2196f3;
+    }
+    span {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-
-<div class="card" onclick="openDashboard()" 
-     style="cursor: pointer; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: 0.3s;">
-    <i class="fas fa-chart-line icon" style="font-size: 24px; color: #2196f3; margin-bottom: 8px;"></i>
-    <span style="font-weight: bold; font-size: 18px; display:block;">
-        Training Dashboard
-    </span>
-</div>
-
-<script>
-  function openDashboard() {
-    window.location.href = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false";
-  }
-</script>
-    
-    
-
-</div>
-        <div class="card">
-            <i class="fas fa-calendar-alt icon"></i>
-            <span>Training Programs</span>
-        </div>
-        <div class="card">
-            <i class="fas fa-bolt icon"></i>
-            <span>Today’s Programs</span>
-        </div>
-        <div class="card">
-            <i class="fas fa-link icon"></i>
-            <span>Quick Links</span>
-        </div>
+  <h2>Training Hub Dashboard</h2>
+  <div class="container">
+    <!-- Training Dashboard -->
+    <div class="card" onclick="openDashboard()">
+      <i class="fas fa-chart-line icon"></i>
+      <span>Training Dashboard</span>
     </div>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
-    </script>
+
+    <!-- Training Programs -->
+    <div class="card" onclick="openPrograms()">
+      <i class="fas fa-calendar-alt icon"></i>
+      <span>Training Programs</span>
+    </div>
+
+    <!-- Today's Program -->
+    <div class="card" onclick="alert('Today\\'s Program will open here...')">
+      <i class="fas fa-bolt icon"></i>
+      <span>Today's Program</span>
+    </div>
+
+    <!-- Quick Link -->
+    <div class="card" onclick="alert('Quick links will open here...')">
+      <i class="fas fa-link icon"></i>
+      <span>Quick Link</span>
+    </div>
+  </div>
+
+  <script>
+    function openDashboard() {
+      window.location.href = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubhtml?gid=1463372858&single=true&widget=true&headers=false";
+    }
+    function openPrograms() {
+      window.location.href = "programs.html";
+    }
+  </script>
 </body>
 </html>
