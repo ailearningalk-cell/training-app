@@ -6,7 +6,7 @@
 <title>Today's Programs</title>
 <link rel="stylesheet" href="style.css">
 <style>
-/* Use homepage background */
+/* Homepage background */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -17,7 +17,7 @@ body {
   color: #fff;
 }
 
-/* Back button same as homepage */
+/* Back button */
 .back-btn {
   position: fixed;
   top: 20px;
@@ -112,7 +112,7 @@ tbody tr:nth-child(even) {
   </div>
 </div>
 
-<!-- PapaParse for robust CSV parsing -->
+<!-- PapaParse for CSV -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 <script>
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
@@ -137,17 +137,9 @@ function showLoading(){document.getElementById('loading').style.display='block';
 function showNoData(msg){document.getElementById('loading').style.display='none'; document.getElementById('programsTable').style.display='none'; let el=document.getElementById('noData'); el.textContent=msg; el.style.display='block';}
 function showTable(html){document.getElementById('loading').style.display='none'; document.getElementById('noData').style.display='none'; let el=document.getElementById('programsTable'); el.innerHTML=html; el.style.display='table';}
 
-function findHeaderRow(rows){
-  for(let i=0;i<Math.min(rows.length,20);i++){
-    const lc=rows[i].map(c=>norm(c).toLowerCase());
-    if(lc.includes('day') && (lc.includes('name') || lc.includes('training'))) return i;
-  }
-  return -1;
-}
-
 function loadTable(){
   showLoading();
-  const url = CSV_URL + "&_=" + Date.now();
+  const url = CSV_URL + "&_=" + Date.now(); // cache-buster
   console.log("Fetching CSV:",url);
 
   Papa.parse(url,{download:true,header:false,skipEmptyLines:false,
@@ -161,16 +153,20 @@ function loadTable(){
         let wd=weekdayName(parsedDate);
         document.getElementById('dateLine').textContent=parsedDate?`Today: ${topDate} [${wd}]`:'Today';
 
-        const headerIdx=findHeaderRow(rawRows);
-        if(headerIdx===-1){showNoData("Sheet missing header row");return;}
-        const headers=rawRows[headerIdx];
-        const dataRows=rawRows.slice(headerIdx+1).filter(r=>r.some(c=>c!==""));
+        const HEADER_ROW_IDX = 2; // Row 3 in sheet
+        const DATA_START_IDX = HEADER_ROW_IDX + 1;
+
+        const headers = rawRows[HEADER_ROW_IDX];
+        if(!headers || headers.length < 4){ showNoData("Sheet missing header row"); return; }
+
+        const dataRows = rawRows.slice(DATA_START_IDX).filter(r=>r.some(c=>c!==""));
 
         if(!dataRows.length || (dataRows[0][0].toLowerCase().includes("there is no training"))){
           showNoData("There is no training");
           return;
         }
 
+        // Identify columns
         const headerLc=headers.map(h=>norm(h).toLowerCase());
         const dayIdx = headerLc.findIndex(h=>h.includes('day'));
         const nameIdx = headerLc.findIndex(h=>h.includes('name')||h.includes('training'));
