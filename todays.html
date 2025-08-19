@@ -1,83 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Today's Programs</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <!-- PapaParse for reliable CSV parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 </head>
 <body>
 
   <!-- Back Button -->
-  <a href="index.html" class="back-btn">&#8592;</a>
+  <a href="index.html" class="back-btn" aria-label="Back">&#8592;</a>
 
-  <!-- Page Title -->
+  <!-- Page Title + Date Line -->
   <header>
     <h1>Today's Programs</h1>
+    <h2 id="dateLine" style="margin-top:8px;"></h2>
   </header>
 
   <!-- Table Container -->
   <div class="table-container">
-    <table id="programsTable" class="styled-table"></table>
-    <div id="noDataMessage" class="no-data" style="display:none;">
-      No training today
-    </div>
+    <table id="programsTable" class="styled-table" style="display:none;"></table>
+    <div id="noDataMessage" class="no-data" style="display:none;">No training today</div>
   </div>
 
   <script>
-  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
+    // --- CONFIG: your published CSV ---
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
 
-  // Build today in same format as sheet: DD-MMM-YY (e.g. 13-Aug-25)
-  function formatDate(d) {
-    const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const month = months[d.getMonth()];
-    const year = String(d.getFullYear()).slice(-2); // last 2 digits
-    return `${day}-${month}-${year}`;
-  }
+    // Format date as DD-MMM-YY (e.g., 13-Aug-25) to match your sheet
+    function formatSheetDate(d) {
+      const dd = String(d.getDate()).padStart(2, "0");
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const mmm = months[d.getMonth()];
+      const yy = String(d.getFullYear()).slice(-2);
+      return `${dd}-${mmm}-${yy}`;
+    }
 
-  const todayStr = formatDate(new Date());
+    const todayStr = formatSheetDate(new Date());
+    // Set the heading: "Training on 13-Aug-25"
+    document.getElementById("dateLine").textContent = `Training on ${todayStr}`;
 
-  fetch(csvUrl)
-    .then(res => res.text())
-    .then(data => {
-      const rows = data.trim().split("\n").map(r => r.split(","));
-      const headers = ["Sl. No", "Day", "Name of Training", "Venue"];
-      const table = document.getElementById("programsTable");
-      const noDataMessage = document.getElementById("noDataMessage");
+    // Helpers to render UI
+    const tableEl = document.getElementById("programsTable");
+    const noDataEl = document.getElementById("noDataMessage");
 
-      // match Date column (index 1)
-      const todayRows = rows.filter((row, idx) => idx > 0 && row[1].trim() === todayStr);
+    function showNoData() {
+      tableEl.style.display = "none";
+      noDataEl.style.display = "block";
+    }
+    function showTable(html) {
+      tableEl.innerHTML = html;
+      tableEl.style.display = "table";
+      noDataEl.style.display = "none";
+    }
 
-      if (todayRows.length > 0) {
-        // build header
-        let thead = "<thead><tr>";
-        headers.forEach(h => thead += `<th>${h}</th>`);
-        thead += "</tr></thead>";
+    // Parse CSV with PapaParse (robust for quotes/commas/newlines)
+    function loadAndRender() {
+      Papa.parse(CSV_URL, {
+        download: true,
+        header: true,           // Use first row as object keys
+        skipEmptyLines: true,
+        complete: function (results) {
+          try {
+            const rows = (results.data || []).map(r => {
+              // Trim all fields to avoid hidden whitespace issues
+              const out = {};
+              for (const k in r) out[k.trim()] = String(r[k] ?? "").trim();
+              return out;
+            });
 
-        // build body
-        let tbody = "<tbody>";
-        todayRows.forEach((row, i) => {
-          tbody += `
-            <tr>
-              <td>${i + 1}</td>
-              <td>${row[2]}</td>
-              <td>${row[3]}</td>
-              <td>${row[4]}</td>
-            </tr>`;
-        });
-        tbody += "</tbody>";
+            // Filter rows that match today's date in the "Date" column
+            const todays = rows.filter(r => (r["Date"] || "") === todayStr);
 
-        table.innerHTML = thead + tbody;
-        table.style.display = "table";
-        noDataMessage.style.display = "none";
-      } else {
-        table.style.display = "none";
-        noDataMessage.style.display = "block";
-      }
-    });
-</script>
+            if (!todays.length) {
+              showNoData();
+              return;
+            }
 
-</body>
-</html>
+            // Build table HTML
+            let thead = `
+              <thead>
+                <tr>
+                  <th>Sl. No</th>
+                  <th>Day</th>
+                  <th>Name of Training</th>
+                  <th>Venue</th>
+                </tr>
+              </thead>
+            `;
 
+            let tbody = "<tbody>";
+            todays.forEach((r, i) => {
+              const day = r["Day"] || "";
+              const name = r["Name of the Training"] || r["Name"] || "";
+              const venue = r["Venue"] || "";
+              tbody += `
+                <tr>
+                  <td>${i + 1}</td>
+                  <td>${day}</td>
+                  <td>${name}</td>
+                  <td>${venue}</td>
+                </tr>
+              `;
+            });
+            tbody += "</tbody>";
+
+            showTable(thead + tbody);
+          } catch (e) {
+            console.error(e);
+            showNoData();
+          }
+        },
+        error: function (err) {
+          console.error(err);
+          showNoData();
+        }
+      });
+    }
+
+    // Run after PapaPa
