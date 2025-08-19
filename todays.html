@@ -25,52 +25,59 @@
   </div>
 
   <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
+  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
 
-    // Format today’s date as DD-MMM-YY (e.g., 13-Aug-25)
-    const today = new Date();
-    const options = { day: '2-digit', month: 'short', year: '2-digit' };
-    const todayStr = today.toLocaleDateString('en-GB', options).replace(/ /g, "-");
+  // Build today in same format as sheet: DD-MMM-YY (e.g. 13-Aug-25)
+  function formatDate(d) {
+    const day = String(d.getDate()).padStart(2, '0');
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const month = months[d.getMonth()];
+    const year = String(d.getFullYear()).slice(-2); // last 2 digits
+    return `${day}-${month}-${year}`;
+  }
 
-    fetch(csvUrl)
-      .then(response => response.text())
-      .then(data => {
-        const rows = data.split("\n").map(r => r.split(","));
-        const headers = ["Sl. No", "Day", "Name of Training", "Venue"];
-        const table = document.getElementById("programsTable");
-        const noDataMessage = document.getElementById("noDataMessage");
+  const todayStr = formatDate(new Date());
 
-        // Find today’s rows
-        const todayRows = rows.filter((row, idx) => idx > 0 && row[1].trim() === todayStr);
+  fetch(csvUrl)
+    .then(res => res.text())
+    .then(data => {
+      const rows = data.trim().split("\n").map(r => r.split(","));
+      const headers = ["Sl. No", "Day", "Name of Training", "Venue"];
+      const table = document.getElementById("programsTable");
+      const noDataMessage = document.getElementById("noDataMessage");
 
-        if (todayRows.length > 0) {
-          // Build header
-          let thead = "<thead><tr>";
-          headers.forEach(h => thead += `<th>${h}</th>`);
-          thead += "</tr></thead>";
+      // match Date column (index 1)
+      const todayRows = rows.filter((row, idx) => idx > 0 && row[1].trim() === todayStr);
 
-          // Build body
-          let tbody = "<tbody>";
-          todayRows.forEach((row, i) => {
-            tbody += `
-              <tr>
-                <td>${i + 1}</td>
-                <td>${row[2]}</td>
-                <td>${row[3]}</td>
-                <td>${row[4]}</td>
-              </tr>`;
-          });
-          tbody += "</tbody>";
+      if (todayRows.length > 0) {
+        // build header
+        let thead = "<thead><tr>";
+        headers.forEach(h => thead += `<th>${h}</th>`);
+        thead += "</tr></thead>";
 
-          table.innerHTML = thead + tbody;
-          table.style.display = "table";
-          noDataMessage.style.display = "none";
-        } else {
-          table.style.display = "none";
-          noDataMessage.style.display = "block";
-        }
-      });
-  </script>
+        // build body
+        let tbody = "<tbody>";
+        todayRows.forEach((row, i) => {
+          tbody += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${row[2]}</td>
+              <td>${row[3]}</td>
+              <td>${row[4]}</td>
+            </tr>`;
+        });
+        tbody += "</tbody>";
+
+        table.innerHTML = thead + tbody;
+        table.style.display = "table";
+        noDataMessage.style.display = "none";
+      } else {
+        table.style.display = "none";
+        noDataMessage.style.display = "block";
+      }
+    });
+</script>
+
 </body>
 </html>
 
