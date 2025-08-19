@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Programs</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Back Button -->
+  <a href="index.html" class="back-btn">&#8592;</a>
+
+  <!-- Page Title -->
+  <header>
+    <h1>Today's Programs</h1>
+  </header>
+
+  <!-- Table Container -->
+  <div class="table-container">
+    <table id="programsTable" class="styled-table"></table>
+    <div id="noDataMessage" class="no-data" style="display:none;">
+      No training today
+    </div>
+  </div>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
+
+    // Format today’s date as DD-MMM-YY (e.g., 13-Aug-25)
+    const today = new Date();
+    const options = { day: '2-digit', month: 'short', year: '2-digit' };
+    const todayStr = today.toLocaleDateString('en-GB', options).replace(/ /g, "-");
+
+    fetch(csvUrl)
+      .then(response => response.text())
+      .then(data => {
+        const rows = data.split("\n").map(r => r.split(","));
+        const headers = ["Sl. No", "Day", "Name of Training", "Venue"];
+        const table = document.getElementById("programsTable");
+        const noDataMessage = document.getElementById("noDataMessage");
+
+        // Find today’s rows
+        const todayRows = rows.filter((row, idx) => idx > 0 && row[1].trim() === todayStr);
+
+        if (todayRows.length > 0) {
+          // Build header
+          let thead = "<thead><tr>";
+          headers.forEach(h => thead += `<th>${h}</th>`);
+          thead += "</tr></thead>";
+
+          // Build body
+          let tbody = "<tbody>";
+          todayRows.forEach((row, i) => {
+            tbody += `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${row[2]}</td>
+                <td>${row[3]}</td>
+                <td>${row[4]}</td>
+              </tr>`;
+          });
+          tbody += "</tbody>";
+
+          table.innerHTML = thead + tbody;
+          table.style.display = "table";
+          noDataMessage.style.display = "none";
+        } else {
+          table.style.display = "none";
+          noDataMessage.style.display = "block";
+        }
+      });
+  </script>
+</body>
+</html>
 
