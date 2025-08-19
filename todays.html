@@ -1,172 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Today's Programs</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
+  <title>Today's Trainings</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:20px; background:#f7fafc; color:#111 }
+    h1 { margin-bottom:12px; }
+    table { border-collapse: collapse; width:100%; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+    th { background:#2193b0; color:#fff; }
+    tr:nth-child(even) td { background:#f9f9f9; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <a href="index.html" class="back-btn" aria-label="Back">&#8592;</a>
+  <h1 id="heading">Training</h1>
+  <div id="tableArea">Loading…</div>
 
-  <header>
-    <h1>Today's Programs</h1>
-    <h2 id="dateLine" style="margin-top:8px;"></h2>
-  </header>
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
 
-  <div class="table-container">
-    <div id="contentArea">
-      <div id="loading" class="loading">Loading…</div>
-      <table id="programsTable" class="styled-table" style="display:none;"></table>
-      <div id="noDataMessage" class="no-data" style="display:none;"></div>
-    </div>
-  </div>
+function norm(c){ return String(c||"").replace(/\u00A0/g,' ').trim(); }
 
-  <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
+async function loadSheet(){
+  const res = await fetch(CSV_URL);
+  const text = await res.text();
+  const parsed = Papa.parse(text, {header:false, skipEmptyLines:true});
+  const rows = parsed.data.map(r=>r.map(norm));
 
-    // Format date like sheet (DD-MMM-YY)
-    function formatSheetDate(d) {
-      const dd = String(d.getDate()).padStart(2, "0");
-      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      const mmm = months[d.getMonth()];
-      const yy = String(d.getFullYear()).slice(-2);
-      return `${dd}-${mmm}-${yy}`;
-    }
-    const todayStr = formatSheetDate(new Date());
-    document.getElementById("dateLine").textContent = `Training on ${todayStr}`;
+  // Row1 = today's date
+  const todayCell = rows[0][0] || "";
+  document.getElementById("heading").textContent = `Training on ${todayCell}`;
 
-    const loadingEl = document.getElementById("loading");
-    const tableEl = document.getElementById("programsTable");
-    const noDataEl = document.getElementById("noDataMessage");
+  // Row3 = headers, Row4+ = data
+  const headers = rows[2];
+  const data = rows.slice(3);
 
-    function showNoData(msg = "No training today") {
-      loadingEl.style.display = "none";
-      tableEl.style.display = "none";
-      noDataEl.style.display = "block";
-      noDataEl.textContent = msg;
-    }
-    function showTable(html) {
-      loadingEl.style.display = "none";
-      noDataEl.style.display = "none";
-      tableEl.innerHTML = html;
-      tableEl.style.display = "table";
-    }
+  // If first row of data contains "There is no training today"
+  if (data.length && data[0][0].toLowerCase().includes("there is no training")) {
+    document.getElementById("tableArea").innerHTML = "<p>No training today.</p>";
+    return;
+  }
 
-    // detect header row index by scanning first N rows for header keywords
-    function findHeaderRow(rows, maxScan=10) {
-      for (let i = 0; i < Math.min(rows.length, maxScan); i++) {
-        const row = rows[i].map(c => String(c || "").trim().toLowerCase());
-        const hasDay = row.some(cell => cell === "day" || cell.includes("day"));
-        const hasName = row.some(cell => cell.includes("name") || cell.includes("training"));
-        if (hasDay && hasName) return i;
-      }
-      return -1;
-    }
+  // Build HTML table
+  let html = "<table><thead><tr>";
+  headers.forEach(h => { html += `<th>${h}</th>`; });
+  html += "</tr></thead><tbody>";
 
-    // robust cell normalizer
-    function norm(s) { return String(s || "").replace(/\u00A0/g,' ').trim(); }
+  data.forEach(r => {
+    if (r.every(cell => cell==="")) return; // skip blank
+    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
+  });
 
-    // parse and render
-    function loadAndRender() {
-      Papa.parse(CSV_URL, {
-        download: true,
-        header: false,         // raw rows (we'll find header row manually)
-        skipEmptyLines: true,
-        complete: results => {
-          const rows = results.data.map(r => r.map(c => norm(c)));
-          console.log("CSV rows (first 12):", rows.slice(0,12));
-          // find header row
-          const headerIdx = findHeaderRow(rows, 12);
-          console.log("Detected header index:", headerIdx);
-          if (headerIdx === -1) {
-            showNoData("Sheet header not found (expect 'Day' and 'Name'). Open console for debug.");
-            return;
-          }
+  html += "</tbody></table>";
+  document.getElementById("tableArea").innerHTML = html;
+}
 
-          const headers = rows[headerIdx].map(h => String(h || "").trim());
-          const dataRows = rows.slice(headerIdx + 1);
-
-          // handle special "There is no training today" fallback (first cell)
-          if (dataRows.length && dataRows[0][0] && dataRows[0][0].toLowerCase().includes("there is no training")) {
-            showNoData("No training today");
-            return;
-          }
-
-          // find Day / Name / Venue columns by header name
-          const findCol = candidates => {
-            const lc = headers.map(h => String(h||"").toLowerCase());
-            for (const cand of candidates) {
-              const idx = lc.findIndex(c => c === cand || c.includes(cand));
-              if (idx !== -1) return idx;
-            }
-            return -1;
-          };
-
-          const dayIdx = findCol(["day","date"]);
-          const nameIdx = findCol(["name","training"]);
-          const venueIdx = findCol(["venue","place","location"]);
-
-          console.log({ headers, dayIdx, nameIdx, venueIdx, dataRowsCount: dataRows.length });
-
-          if (dayIdx === -1 || nameIdx === -1) {
-            showNoData("Sheet columns missing. Need 'Day' and 'Name of the Training' columns.");
-            return;
-          }
-
-          // Filter rows matching today's date in Day column
-          const todays = dataRows.filter(r => {
-            const cell = String(r[dayIdx] || "").trim();
-            return cell === todayStr;
-          });
-
-          console.log("rows matching today:", todays.length);
-
-          if (!todays.length) {
-            showNoData("No training today");
-            return;
-          }
-
-          // Build table with our preferred columns and restart Sl No from 1
-          let thead = `
-            <thead>
-              <tr>
-                <th>Sl. No</th>
-                <th>Day</th>
-                <th>Name of the Training</th>
-                <th>Venue</th>
-              </tr>
-            </thead>
-          `;
-
-          let tbody = "<tbody>";
-          todays.forEach((r, i) => {
-            const day = r[dayIdx] || "";
-            const name = r[nameIdx] || "";
-            const venue = venueIdx !== -1 ? (r[venueIdx] || "") : "";
-            tbody += `
-              <tr>
-                <td>${i + 1}</td>
-                <td>${day}</td>
-                <td>${name}</td>
-                <td>${venue}</td>
-              </tr>
-            `;
-          });
-          tbody += "</tbody>";
-
-          showTable(thead + tbody);
-        },
-        error: err => {
-          console.error("PapaParse error:", err);
-          showNoData("Failed to load sheet (see console).");
-        }
-      });
-    }
-
-    // run after PapaParse loaded
-    window.addEventListener("DOMContentLoaded", loadAndRender);
-  </script>
+loadSheet();
+</script>
 </body>
 </html>
