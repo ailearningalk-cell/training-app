@@ -27,7 +27,7 @@
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
 
-    // Format today in same style as sheet: DD-MMM-YY
+    // Format today like sheet (DD-MMM-YY)
     function formatSheetDate(d) {
       const dd = String(d.getDate()).padStart(2, "0");
       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -48,20 +48,30 @@
       complete: function (results) {
         const rows = results.data;
 
-        // If first cell is "There is no training today"
-        if (rows[0][0] && rows[0][0].includes("There is no training today")) {
+        // ⚡ Skip first 2 rows (A1 today(), A2 blank)
+        const content = rows.slice(2);
+
+        // If sheet says "There is no training today"
+        if (content[0] && content[0][0].includes("There is no training today")) {
           tableEl.style.display = "none";
           noDataEl.style.display = "block";
           noDataEl.textContent = "No training today";
           return;
         }
 
-        // Otherwise we assume first row is headers
-        const headers = rows[0];
-        const dataRows = rows.slice(1);
+        // First row now should be headers
+        const headers = content[0];
+        const dataRows = content.slice(1);
 
-        // Filter only today's rows (match Day column)
+        // Find Day column
         const dayIndex = headers.indexOf("Day");
+        if (dayIndex === -1) {
+          noDataEl.style.display = "block";
+          noDataEl.textContent = "Sheet format error (no Day column)";
+          return;
+        }
+
+        // Filter today's rows
         const todayRows = dataRows.filter(r => r[dayIndex] === todayStr);
 
         if (!todayRows.length) {
@@ -73,17 +83,13 @@
 
         // Build table
         let thead = "<thead><tr>";
-        headers.forEach(h => {
-          thead += `<th>${h}</th>`;
-        });
+        headers.forEach(h => thead += `<th>${h}</th>`);
         thead += "</tr></thead>";
 
         let tbody = "<tbody>";
         todayRows.forEach(r => {
           tbody += "<tr>";
-          r.forEach(cell => {
-            tbody += `<td>${cell}</td>`;
-          });
+          r.forEach(c => tbody += `<td>${c}</td>`);
           tbody += "</tr>";
         });
         tbody += "</tbody>";
