@@ -1,128 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Today's & Tomorrow's Programs</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
-  <!-- Back Button -->
-  <a href="index.html" class="back-btn" aria-label="Back">&#8592;</a>
+  <div class="page">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
 
-  <main class="page">
-    <!-- Today Block -->
-    <section class="card card-today">
-      <h2 id="todayTitle">Today</h2>
-      <div id="todayContent" class="table-wrap">
-        <div class="loading">Loading…</div>
-      </div>
-    </section>
+    <!-- Today -->
+    <div class="card card-today">
+      <h2 id="today-title">Today</h2>
+      <div id="today-programs">Loading...</div>
+    </div>
 
-    <!-- Tomorrow Block -->
-    <section class="card card-tomorrow">
-      <h2 id="tomorrowTitle">Tomorrow</h2>
-      <div id="tomorrowContent" class="table-wrap">
-        <div class="loading">Loading…</div>
-      </div>
-    </section>
-  </main>
+    <!-- Tomorrow -->
+    <div class="card card-tomorrow">
+      <h2 id="tomorrow-title">Tomorrow</h2>
+      <div id="tomorrow-programs">Loading...</div>
+    </div>
+  </div>
 
   <script>
-    const SHEET_ID = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co";
-    const API_KEY  = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
-    const SHEET_NAME = "Programs";
+    const API_KEY = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
+    const SHEET_ID = "1229350699";
+    const SHEET_NAME = "Programs"; // renamed tab
+    const RANGE = "A1:D"; // Date, Day, Name, Venue
 
-    function apiUrl() {
-      const ts = Date.now();
-      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!A1:D?valueRenderOption=FORMATTED_VALUE&key=${API_KEY}&_=${ts}`;
+    const todayEl = document.getElementById("today-programs");
+    const tomorrowEl = document.getElementById("tomorrow-programs");
+
+    const todayTitle = document.getElementById("today-title");
+    const tomorrowTitle = document.getElementById("tomorrow-title");
+
+    // Format date like: 19-Aug-25 [Tuesday]
+    function formatDate(date) {
+      const options = { weekday: 'long', day: '2-digit', month: 'short', year: '2-digit' };
+      return date.toLocaleDateString('en-GB', options)
+        .replace(',', '')
+        .replace(/(\d{2}) (\w{3}) (\d{2}) (\w+)/, "$1-$2-$3 [$4]");
     }
 
-    function dayKeyAndLabel(date) {
-      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      const day = String(d.getDate()).padStart(2, '0');
-      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      const month = months[d.getMonth()];
-      const year = String(d.getFullYear()).slice(-2);
-      const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
-      return {
-        key: `${day}-${month}-${year}`,
-        label: `${day}-${month}-${year} [${weekday}]`
-      };
-    }
+    async function loadData() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!${RANGE}?key=${API_KEY}&nocache=${Date.now()}`;
 
-    function highlightDay(text) {
-      if (!text) return "";
-      if (/\[(Opening|Closing)\]/i.test(text)) {
-        return `<span class="badge-highlight">${text}</span>`;
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        const data = await res.json();
+
+        if (!data.values || data.values.length < 2) {
+          todayEl.innerHTML = '<div class="no-training">No training today</div>';
+          tomorrowEl.innerHTML = '<div class="no-training">No training tomorrow</div>';
+          return;
+        }
+
+        const rows = data.values;
+        const headers = rows[0];
+        const records = rows.slice(1);
+
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+
+        const todayStr = today.toLocaleDateString("en-GB");
+        const tomorrowStr = tomorrow.toLocaleDateString("en-GB");
+
+        todayTitle.textContent = `Today: ${formatDate(today)}`;
+        tomorrowTitle.textContent = `Tomorrow: ${formatDate(tomorrow)}`;
+
+        renderPrograms(records, todayStr, todayEl);
+        renderPrograms(records, tomorrowStr, tomorrowEl);
+
+      } catch (err) {
+        todayEl.innerHTML = '<div class="no-training">Error loading data</div>';
+        tomorrowEl.innerHTML = '<div class="no-training">Error loading data</div>';
+        console.error(err);
       }
-      return text;
     }
 
-    function buildTable(rows) {
-      if (!rows || rows.length === 0) {
-        return `<div class="no-training">No training</div>`;
+    function renderPrograms(records, matchDate, container) {
+      const filtered = records.filter(r => {
+        let d = new Date(r[0]).toLocaleDateString("en-GB");
+        return d === matchDate;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="no-training">No training</div>';
+        return;
       }
-      let html = `<table class="styled-table"><thead><tr>
-        <th>Sl. No</th>
-        <th>Day</th>
-        <th>Name of Training</th>
-        <th>Venue</th>
-      </tr></thead><tbody>`;
-      rows.forEach((r, i) => {
-        const dayVal = highlightDay(r[1] || "");
-        html += `<tr>
+
+      let table = `<table class="styled-table">
+        <tr>
+          <th>Sl. No</th>
+          <th>Day</th>
+          <th>Name of the Training</th>
+          <th>Venue</th>
+        </tr>`;
+
+      filtered.forEach((r, i) => {
+        let dayCell = r[1] || "";
+        if (/\[Opening\]|\[Closing\]/i.test(dayCell)) {
+          dayCell = `<span class="badge-highlight">${dayCell}</span>`;
+        }
+
+        table += `<tr>
           <td class="center">${i + 1}</td>
-          <td>${dayVal}</td>
+          <td>${dayCell}</td>
           <td>${r[2] || ""}</td>
           <td>${r[3] || ""}</td>
         </tr>`;
       });
-      html += `</tbody></table>`;
-      return html;
+
+      table += "</table>";
+      container.innerHTML = table;
     }
 
-    function setTitles() {
-      const now = new Date();
-      const t = dayKeyAndLabel(now);
-      const tm = dayKeyAndLabel(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
-      document.getElementById("todayTitle").textContent    = `Today: ${t.label}`;
-      document.getElementById("tomorrowTitle").textContent = `Tomorrow: ${tm.label}`;
-      return { today: t, tomorrow: tm };
-    }
-
-    async function loadData() {
-      const { today, tomorrow } = setTitles();
-      try {
-        const res = await fetch(apiUrl(), { cache: "no-store" });
-        const json = await res.json();
-
-        if (!json.values || json.values.length < 2) {
-          document.getElementById("todayContent").innerHTML    = `<div class="no-training">No training today</div>`;
-          document.getElementById("tomorrowContent").innerHTML = `<div class="no-training">No training tomorrow</div>`;
-          return;
-        }
-
-        const rows = json.values;
-        const data = rows.slice(1).filter(r => r.some(c => (c || "").trim() !== ""));
-
-        const todaysRows    = data.filter(r => (r[0] || "").trim() === today.key);
-        const tomorrowsRows = data.filter(r => (r[0] || "").trim() === tomorrow.key);
-
-        document.getElementById("todayContent").innerHTML    = buildTable(todaysRows);
-        document.getElementById("tomorrowContent").innerHTML = buildTable(tomorrowsRows);
-      } catch (e) {
-        console.error(e);
-        const errHtml = `<div class="no-training">Error loading data</div>`;
-        document.getElementById("todayContent").innerHTML = errHtml;
-        document.getElementById("tomorrowContent").innerHTML = errHtml;
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadData();
-      setInterval(loadData, 90000);
-    });
+    loadData();
+    setInterval(loadData, 60 * 1000); // refresh every 1 minute
   </script>
 </body>
 </html>
