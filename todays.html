@@ -3,103 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today's Programs</title>
+  <title>Today's & Tomorrow's Programs</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a href="index.html" class="back-btn">⬅ Back</a>
 
-  <div id="todayBlock" class="card today-card">
-    <h2 id="todayTitle">Today</h2>
+  <!-- Back Button -->
+  <a href="index.html" class="back-btn">&#8592;</a>
+
+  <!-- Today Block -->
+  <div class="block block-today">
+    <h2 id="todayHeader">Today</h2>
     <div id="todayContent">Loading...</div>
   </div>
 
-  <div id="tomorrowBlock" class="card tomorrow-card">
-    <h2 id="tomorrowTitle">Tomorrow</h2>
+  <!-- Tomorrow Block -->
+  <div class="block block-tomorrow">
+    <h2 id="tomorrowHeader">Tomorrow</h2>
     <div id="tomorrowContent">Loading...</div>
   </div>
 
-  <script>
-    const SHEET_ID = "1229350699"; 
-    const API_KEY = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
-    const SHEET_NAME = "Today'sProgram";
+<script>
+const sheetId = "1229350699"; // Your Sheet ID
+const apiKey = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g"; // Your API Key
+const sheetName = "Programs";
 
-    const API_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}?key=${API_KEY}`;
+const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!A1:D?key=${apiKey}`;
 
-    function formatDate(date) {
-      return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "2-digit" });
+// Format date helper
+function formatDate(d) {
+  const day = String(d.getDate()).padStart(2, '0');
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const month = months[d.getMonth()];
+  const year = String(d.getFullYear()).slice(-2);
+  const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+  return { key: `${day}-${month}-${year}`, label: `${day}-${month}-${year} [${weekday}]` };
+}
+
+const today = new Date();
+const tomorrow = new Date();
+tomorrow.setDate(today.getDate() + 1);
+
+const todayStr = formatDate(today);
+const tomorrowStr = formatDate(tomorrow);
+
+document.getElementById("todayHeader").textContent = "Today: " + todayStr.label;
+document.getElementById("tomorrowHeader").textContent = "Tomorrow: " + tomorrowStr.label;
+
+fetch(apiUrl)
+  .then(res => res.json())
+  .then(data => {
+    if (!data.values || data.values.length < 2) {
+      document.getElementById("todayContent").innerHTML = `<div class="no-training">No training today</div>`;
+      document.getElementById("tomorrowContent").innerHTML = `<div class="no-training">No training tomorrow</div>`;
+      return;
     }
 
-    function loadPrograms() {
-      fetch(API_URL)
-        .then(res => res.json())
-        .then(data => {
-          if (!data.values) {
-            document.getElementById("todayContent").innerHTML = "<div class='no-training'>Sheet Empty</div>";
-            return;
-          }
+    const rows = data.values;
+    const header = rows[0];
+    const entries = rows.slice(1);
 
-          const rows = data.values;
-          const programs = rows.slice(1); // skip header row
-
-          const today = new Date();
-          today.setHours(0,0,0,0);
-
-          const tomorrow = new Date(today);
-          tomorrow.setDate(today.getDate() + 1);
-
-          document.getElementById("todayTitle").innerText = 
-            `Today: ${formatDate(today)} [${today.toLocaleDateString("en-US", { weekday: "long" })}]`;
-
-          document.getElementById("tomorrowTitle").innerText = 
-            `Tomorrow: ${formatDate(tomorrow)} [${tomorrow.toLocaleDateString("en-US", { weekday: "long" })}]`;
-
-          renderBlock(programs, today, "todayContent");
-          renderBlock(programs, tomorrow, "tomorrowContent");
-        })
-        .catch(err => {
-          console.error(err);
-          document.getElementById("todayContent").innerHTML = "<div class='no-training'>Error loading data</div>";
-        });
-    }
-
-    function renderBlock(programs, targetDate, containerId) {
-      const filtered = programs.filter(r => {
-        if (!r[0]) return false;
-        const d = new Date(r[0]);
-        d.setHours(0,0,0,0);
-        return d.getTime() === targetDate.getTime();
-      });
-
-      const container = document.getElementById(containerId);
-
+    function buildTable(targetDate, containerId) {
+      const filtered = entries.filter(r => r[0] && r[0].trim() === targetDate.key);
       if (filtered.length === 0) {
-        container.innerHTML = "<div class='no-training'>There is no training</div>";
+        document.getElementById(containerId).innerHTML = `<div class="no-training">No training</div>`;
         return;
       }
 
-      let html = "<table><tr>";
-      html += "<th>Sl. No</th><th>Day</th><th>Name of Training</th><th>Venue</th></tr>";
+      let table = `<table class="styled-table"><thead><tr>`;
+      header.forEach(h => table += `<th>${h}</th>`);
+      table += `</tr></thead><tbody>`;
 
-      filtered.forEach((row, idx) => {
-        let day = row[1] || "";
-        if (day.includes("Opening") || day.includes("Closing")) {
-          day = `<span class="highlight-text">${day}</span>`;
+      filtered.forEach((r, i) => {
+        let dayCell = r[1] || "";
+        if (dayCell.includes("[Opening]") || dayCell.includes("[Closing]")) {
+          dayCell = `<span class="highlight">${dayCell}</span>`;
         }
-        html += `<tr>
-          <td>${idx+1}</td>
-          <td>${day}</td>
-          <td>${row[2] || ""}</td>
-          <td>${row[3] || ""}</td>
+        table += `<tr>
+          <td>${i + 1}</td>
+          <td>${dayCell}</td>
+          <td>${r[2] || ""}</td>
+          <td>${r[3] || ""}</td>
         </tr>`;
       });
 
-      html += "</table>";
-      container.innerHTML = html;
+      table += `</tbody></table>`;
+      document.getElementById(containerId).innerHTML = table;
     }
 
-    loadPrograms();
-    setInterval(loadPrograms, 90000); // refresh every 90s
-  </script>
+    buildTable(todayStr, "todayContent");
+    buildTable(tomorrowStr, "tomorrowContent");
+  })
+  .catch(err => {
+    document.getElementById("todayContent").innerHTML = `<div class="no-training">Error loading data</div>`;
+    document.getElementById("tomorrowContent").innerHTML = `<div class="no-training">Error loading data</div>`;
+    console.error("Error:", err);
+  });
+
+// Auto refresh every 2 minutes
+setInterval(() => location.reload(), 120000);
+</script>
+
 </body>
 </html>
