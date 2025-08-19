@@ -11,6 +11,7 @@
     th, td { border:1px solid #ddd; padding:8px; text-align:left; }
     th { background:#2193b0; color:#fff; }
     tr:nth-child(even) td { background:#f9f9f9; }
+    .nodata { padding:12px; background:#fff3cd; border:1px solid #ffeeba; border-radius:6px; }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
@@ -24,40 +25,49 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuw
 function norm(c){ return String(c||"").replace(/\u00A0/g,' ').trim(); }
 
 async function loadSheet(){
-  const res = await fetch(CSV_URL);
-  const text = await res.text();
-  const parsed = Papa.parse(text, {header:false, skipEmptyLines:true});
-  const rows = parsed.data.map(r=>r.map(norm));
+  try {
+    const res = await fetch(CSV_URL + "&_=" + Date.now()); // cache-buster
+    const text = await res.text();
+    const parsed = Papa.parse(text, {header:false, skipEmptyLines:false});
+    const rows = parsed.data.map(r=>r.map(norm));
 
-  // Row1 = today's date
-  const todayCell = rows[0][0] || "";
-  document.getElementById("heading").textContent = `Training on ${todayCell}`;
+    // Row1 = today's date
+    const todayCell = rows[0][0] || "";
+    document.getElementById("heading").textContent = `Training on ${todayCell}`;
 
-  // Row3 = headers, Row4+ = data
-  const headers = rows[2];
-  const data = rows.slice(3);
+    // Row3 = headers, Row4+ = data
+    const headers = rows[2];
+    const data = rows.slice(3).filter(r => r.some(cell => cell!=="")); // skip fully blank rows
 
-  // If first row of data contains "There is no training today"
-  if (data.length && data[0][0].toLowerCase().includes("there is no training")) {
-    document.getElementById("tableArea").innerHTML = "<p>No training today.</p>";
-    return;
+    const tableArea = document.getElementById("tableArea");
+
+    if (!data.length || (data[0][0] && data[0][0].toLowerCase().includes("there is no training"))) {
+      tableArea.innerHTML = `<p class="nodata">There is no training today</p>`;
+      return;
+    }
+
+    // Build HTML table
+    let html = "<table><thead><tr>";
+    headers.forEach(h => { html += `<th>${h}</th>`; });
+    html += "</tr></thead><tbody>";
+
+    data.forEach(r => {
+      html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
+    });
+
+    html += "</tbody></table>";
+    tableArea.innerHTML = html;
+  } catch(e){
+    document.getElementById("tableArea").innerHTML = `<p class="nodata">Error loading data.</p>`;
+    console.error(e);
   }
-
-  // Build HTML table
-  let html = "<table><thead><tr>";
-  headers.forEach(h => { html += `<th>${h}</th>`; });
-  html += "</tr></thead><tbody>";
-
-  data.forEach(r => {
-    if (r.every(cell => cell==="")) return; // skip blank
-    html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
-  });
-
-  html += "</tbody></table>";
-  document.getElementById("tableArea").innerHTML = html;
 }
 
+// Load now
 loadSheet();
+
+// Optional: auto-refresh every 2 minutes
+setInterval(loadSheet, 120000);
 </script>
 </body>
 </html>
