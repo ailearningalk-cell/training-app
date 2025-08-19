@@ -1,92 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Training App</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-      color: white;
-    }
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      width: 100%;
-      max-width: 350px;
-    }
-    .card {
-      background: rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 20px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      gap: 15px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-    .card:hover, .card:focus {
-      transform: scale(1.05);
-      background: rgba(255,255,255,0.3);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #3acfd5, #3a4ed5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 350px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            gap: 15px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .card:hover,
+        .card:focus {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- Header -->
-  <header>
-    <h1>Training App</h1>
-  </header>
+    <!-- Header -->
+    <header>
+        <h1>Training App</h1>
+    </header>
 
-  <!-- Main menu -->
-  <div class="container" id="mainMenu">
-    <a class="card" href="dashboard.html">
-      <i class="fas fa-chart-line"></i> Training Dashboard
-    </a>
-    <a class="card" href="programs.html">
-      <i class="fas fa-calendar"></i> Training Programs
-    </a>
-    <div class="card" onclick="openTodaysPrograms()">
-      <i class="fas fa-bolt"></i> Today's Programs
-    </div>
-    <div class="card" onclick="openQuickLinks()">
-      <i class="fas fa-link"></i> Quick Links
-    </div>
-  </div>
+    <!-- Main menu -->
+    <div class="container" id="mainMenu">
+        <a class="card" href="dashboard.html">
+            <i class="fas fa-chart-line"></i> Training Dashboard
+        </a>
+        <a class="card" href="programs.html">
+            <i class="fas fa-calendar"></i> Training Programs
+        </a>
 
-  <script>
+        <!-- <div class="card" onclick="openTodaysPrograms()"> -->
+        <a class="card" href="todays.html">
+            <i class="fas fa-bolt"></i> Today's Programs
+        </a>
+        <!-- </div> -->
+
+        <div class="card" onclick="openQuickLinks()">
+            <i class="fas fa-link"></i> Quick Links
+        </div>
+    </div>
+
+    <!-- <script>
     function openTodaysPrograms() {
       alert("Today's programs feature will open here.");
     }
     function openQuickLinks() {
       alert("Quick Links feature will open here.");
     }
-  </script>
+  </script> -->
 
 </body>
+
 </html>
