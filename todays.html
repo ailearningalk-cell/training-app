@@ -3,71 +3,228 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Today's Trainings</title>
+  <title>Today's Programs</title>
+
+  <!-- you can keep linking your global style.css; the rules below are safe -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- small page styles that won't break your other pages -->
   <style>
-    body { font-family: Arial, sans-serif; margin:20px; background:#f7fafc; color:#111 }
-    h1 { margin-bottom:12px; }
-    table { border-collapse: collapse; width:100%; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-    th, td { border:1px solid #ddd; padding:8px; text-align:left; }
-    th { background:#2193b0; color:#fff; }
-    tr:nth-child(even) td { background:#f9f9f9; }
-    .nodata { padding:12px; background:#fff3cd; border:1px solid #ffeeba; border-radius:6px; }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-</head>
-<body>
-  <h1 id="heading">Training</h1>
-  <div id="tableArea">Loading…</div>
-
-<script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
-
-function norm(c){ return String(c||"").replace(/\u00A0/g,' ').trim(); }
-
-async function loadSheet(){
-  try {
-    const res = await fetch(CSV_URL + "&_=" + Date.now()); // cache-buster
-    const text = await res.text();
-    const parsed = Papa.parse(text, {header:false, skipEmptyLines:false});
-    const rows = parsed.data.map(r=>r.map(norm));
-
-    // Row1 = today's date
-    const todayCell = rows[0][0] || "";
-    document.getElementById("heading").textContent = `Training on ${todayCell}`;
-
-    // Row3 = headers, Row4+ = data
-    const headers = rows[2];
-    const data = rows.slice(3).filter(r => r.some(cell => cell!=="")); // skip fully blank rows
-
-    const tableArea = document.getElementById("tableArea");
-
-    if (!data.length || (data[0][0] && data[0][0].toLowerCase().includes("there is no training"))) {
-      tableArea.innerHTML = `<p class="nodata">There is no training today</p>`;
-      return;
+    /* page background + heading style */
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; min-height:100vh;
+           background: linear-gradient(135deg,#89f7fe 0%,#2193b0 100%);
+           color:#111; padding:18px; box-sizing:border-box; }
+    .page {
+      max-width:980px; margin: 18px auto; background: rgba(255,255,255,0.06);
+      border-radius:14px; padding:18px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      backdrop-filter: blur(3px);
     }
 
-    // Build HTML table
-    let html = "<table><thead><tr>";
-    headers.forEach(h => { html += `<th>${h}</th>`; });
-    html += "</tr></thead><tbody>";
+    .back-btn {
+      position: fixed; top:14px; left:14px;
+      width:44px; height:44px; border-radius:50%; display:flex;
+      align-items:center; justify-content:center; text-decoration:none;
+      color:#fff; background: rgba(0,0,0,0.18); font-size:18px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.18);
+    }
+    .back-btn:hover { transform:scale(1.05); }
 
-    data.forEach(r => {
-      html += "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>";
-    });
+    header { text-align:center; margin-bottom:14px; color: #fff; }
+    #dateLine {
+      font-size:18px; margin:6px 0 0; font-weight:700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
 
-    html += "</tbody></table>";
-    tableArea.innerHTML = html;
-  } catch(e){
-    document.getElementById("tableArea").innerHTML = `<p class="nodata">Error loading data.</p>`;
-    console.error(e);
+    .table-wrap { background: #fff; border-radius:10px; padding:8px; color:#111; }
+    table { width:100%; border-collapse:collapse; font-size:15px; }
+    thead th { background:#2563eb; color:#fff; padding:10px; text-align:left; }
+    th, td { border:1px solid #e5e7eb; padding:10px; vertical-align:top; }
+    tbody tr:nth-child(even) td { background:#f8fafc; }
+    .nodata {
+      padding:16px; text-align:center; color:#b91c1c; font-weight:800; background:#fff6f6;
+      border-radius:8px; border:1px solid #fca5a5;
+    }
+
+    .loading { padding:16px; text-align:center; color:#374151; }
+
+    @media (max-width:640px) {
+      .page { padding:12px; margin:10px; }
+      thead th, th, td { padding:8px; font-size:14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back -->
+  <a class="back-btn" href="index.html" title="Back">←</a>
+
+  <div class="page">
+    <header>
+      <div style="font-size:20px; color:#ffffff; font-weight:700">Today's Programs</div>
+      <div id="dateLine">Loading date…</div>
+    </header>
+
+    <div id="contentArea" class="table-wrap">
+      <div id="loading" class="loading">Loading…</div>
+      <table id="programsTable" style="display:none;"></table>
+      <div id="noData" class="nodata" style="display:none;">There is no training</div>
+    </div>
+  </div>
+
+  <!-- PapaParse (robust CSV parsing) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
+
+  <script>
+  // ---------- CONFIG ----------
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
+
+  // how often to auto-refresh (ms). 0 = no auto-refresh.
+  const AUTO_REFRESH_MS = 90 * 1000;
+
+  // ---------- helpers ----------
+  function norm(s) { return String(s||"").replace(/\u00A0/g,' ').trim(); }
+
+  // parse date in sheet format "DD-MMM-YY" -> Date
+  function parseSheetDate(s) {
+    if (!s) return null;
+    const parts = s.trim().split(/[-\/]/);
+    if (parts.length < 3) return null;
+    const dd = parseInt(parts[0], 10);
+    const mmm = parts[1];
+    const yy = parseInt(parts[2], 10);
+    const months = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    const m = months[mmm] !== undefined ? months[mmm] : (parseInt(mmm,10) - 1);
+    const year = 2000 + yy; // safe for 2-digit years in 2000s
+    return new Date(year, m, dd);
   }
-}
 
-// Load now
-loadSheet();
+  function weekdayName(d) { return d ? d.toLocaleDateString('en-GB',{weekday:'long'}) : ''; }
 
-// Optional: auto-refresh every 2 minutes
-setInterval(loadSheet, 120000);
-</script>
+  // ---------- render ----------
+  const loadingEl = () => document.getElementById('loading');
+  const tableEl = () => document.getElementById('programsTable');
+  const noDataEl = () => document.getElementById('noData');
+  const dateLineEl = () => document.getElementById('dateLine');
+
+  function showLoading() {
+    loadingEl().style.display = 'block';
+    tableEl().style.display = 'none';
+    noDataEl().style.display = 'none';
+  }
+
+  function showNoData(msg = "There is no training") {
+    loadingEl().style.display = 'none';
+    tableEl().style.display = 'none';
+    noDataEl().textContent = msg;
+    noDataEl().style.display = 'block';
+  }
+
+  function showTableHtml(html) {
+    loadingEl().style.display = 'none';
+    noDataEl().style.display = 'none';
+    tableEl().innerHTML = html;
+    tableEl().style.display = 'table';
+  }
+
+  // Detect header row automatically (scans first few rows)
+  function findHeaderRow(rows, maxScan=12) {
+    for (let i=0;i<Math.min(rows.length, maxScan); i++) {
+      const lc = rows[i].map(c => norm(c).toLowerCase());
+      const hasDay = lc.some(x => x === 'day' || x.includes('day'));
+      const hasName = lc.some(x => x.includes('name') || x.includes('training'));
+      if (hasDay && hasName) return i;
+    }
+    return -1;
+  }
+
+  // main loader
+  function loadAndRender() {
+    showLoading();
+    // cache-buster to avoid stale CSV
+    const url = CSV_URL + "&_=" + Date.now();
+    console.log("Fetching CSV:", url);
+
+    Papa.parse(url, {
+      download: true,
+      header: false,
+      skipEmptyLines: false,
+      complete: (res) => {
+        try {
+          const rawRows = (res.data || []).map(row => row.map(c => norm(c)));
+          console.log("CSV parsed (first 15 rows):", rawRows.slice(0,15));
+
+          // A1 is at rawRows[0][0]
+          const topDateCell = rawRows[0] && rawRows[0][0] ? rawRows[0][0] : '';
+          dateLineEl().textContent = (topDateCell ? `Today: ${topDateCell}` : "Today");
+
+          // compute weekday from A1 if possible
+          const parsedDate = parseSheetDate(topDateCell);
+          if (parsedDate) {
+            const wd = weekdayName(parsedDate);
+            dateLineEl().textContent = `Today: ${topDateCell} [${wd}]`;
+          }
+
+          // find header row automatically (so A1 and blank row do not break)
+          const headerIdx = findHeaderRow(rawRows, 20);
+          if (headerIdx === -1) {
+            console.warn("Header row not found automatically; showing no-data");
+            showNoData("Sheet missing header row (Sl No / Day / Name / Venue)");
+            return;
+          }
+
+          const headers = rawRows[headerIdx];
+          const dataRows = rawRows.slice(headerIdx + 1).filter(r => r.some(c => c !== ''));
+
+          // fallback: if sheet writes "There is no training today" in first data cell
+          if (dataRows.length > 0 && dataRows[0][0] && dataRows[0][0].toLowerCase().includes("there is no training")) {
+            showNoData("There is no training");
+            return;
+          }
+
+          // if no data rows
+          if (!dataRows.length) {
+            showNoData("There is no training");
+            return;
+          }
+
+          // find indices for Day / Name / Venue (in case columns are shifted)
+          const headerLc = headers.map(h => norm(h).toLowerCase());
+          const dayIdx = headerLc.findIndex(h => h === 'day' || h.includes('day'));
+          const nameIdx = headerLc.findIndex(h => h.includes('name') || h.includes('training'));
+          const venueIdx = headerLc.findIndex(h => h.includes('venue') || h.includes('place') || h.includes('location'));
+
+          // Build table HTML using our standard columns (Sl. No, Day, Name of Training, Venue)
+          let html = "<thead><tr>";
+          html += "<th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th>";
+          html += "</tr></thead><tbody>";
+
+          dataRows.forEach((r, i) => {
+            const day = dayIdx !== -1 ? (r[dayIdx] || '') : (r[1] || '');
+            const name = nameIdx !== -1 ? (r[nameIdx] || '') : (r[2] || '');
+            const venue = venueIdx !== -1 ? (r[venueIdx] || '') : (r[3] || '');
+            html += `<tr><td>${i+1}</td><td>${day}</td><td>${name}</td><td>${venue}</td></tr>`;
+          });
+
+          html += "</tbody>";
+          showTableHtml(html);
+
+        } catch (err) {
+          console.error("Render error:", err);
+          showNoData("Error processing sheet");
+        }
+      },
+      error: (err) => {
+        console.error("CSV load error:", err);
+        showNoData("Failed to load sheet");
+      }
+    });
+  }
+
+  // initial load
+  window.addEventListener('DOMContentLoaded', () => {
+    loadAndRender();
+    if (AUTO_REFRESH_MS > 0) setInterval(loadAndRender, AUTO_REFRESH_MS);
+  });
+  </script>
 </body>
 </html>
