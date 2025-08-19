@@ -1,56 +1,63 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #dfe9f3, #ffffff); /* restored */
-  color: #0f172a;
+  background: linear-gradient(180deg, #3acfd5, #3a4ed5); /* same as homepage */
+  color: white;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .page {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 10px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .back-btn {
   display: inline-block;
-  margin: 15px;
+  margin: 10px 0 20px 0;
   text-decoration: none;
   font-size: 22px;
-  color: #0f172a;
+  color: white;
 }
 
 .card {
-  background: #ffffffcc;
-  border-radius: 12px;
-  padding: 15px;
-  margin: 15px 0;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Stronger highlight for today's card */
 .card-today {
-  background: #fef9c3; /* light yellow */
+  background: rgba(255, 255, 255, 0.3); /* brighter highlight */
+  color: black;
 }
 
-/* Softer gray for tomorrow */
 .card-tomorrow {
-  background: #f3f4f6; /* light gray */
+  background: rgba(255, 255, 255, 0.15); /* softer */
+  color: #e5e7eb;
 }
 
 .card h2 {
-  margin: 0 0 10px 0;
-  font-size: 20px;
-  text-align: center; /* center aligned */
+  margin: 0 0 15px 0;
+  font-size: 22px;
+  text-align: center;
 }
 
 .styled-table {
   width: 100%;
   border-collapse: collapse;
+  background: white;
+  color: black;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.styled-table th, .styled-table td {
+.styled-table th,
+.styled-table td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 10px;
 }
 
 .styled-table th {
@@ -58,7 +65,7 @@ body {
   text-align: center;
 }
 
-.center {
+.styled-table td.center {
   text-align: center;
 }
 
@@ -73,7 +80,8 @@ body {
 .no-training {
   text-align: center;
   padding: 15px;
-  background-color: #fee2e2;
-  border-radius: 8px;
-  color: #991b1b;
+  background-color: rgba(255, 0, 0, 0.2);
+  border-radius: 12px;
+  color: #fff;
+  font-weight: bold;
 }
