@@ -29,28 +29,24 @@
   </main>
 
   <script>
-    /** 👇 IMPORTANT: Replace with your real Spreadsheet ID (NOT the gid) */
-    const SHEET_ID = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co"; // e.g., 1AbCDeFGhIJKLmnoPQRstuVWxyz1234567890
+    const SHEET_ID = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co";
     const API_KEY  = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
-    const SHEET_NAME = "Programs"; // your tab name
+    const SHEET_NAME = "Programs";
 
-    // Build API URL; add a timestamp to bypass caches
     function apiUrl() {
       const ts = Date.now();
-      // Read A1:D (Date, Day, Name, Venue)
-      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!A1:D?key=${API_KEY}&_=${ts}`;
+      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!A1:D?valueRenderOption=FORMATTED_VALUE&key=${API_KEY}&_=${ts}`;
     }
 
-    // Format today/tomorrow labels and match the DD-MMM-YY strings used in your sheet
     function dayKeyAndLabel(date) {
       const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       const day = String(d.getDate()).padStart(2, '0');
       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       const month = months[d.getMonth()];
-      const year = String(d.getFullYear()).slice(-2); // 2-digit year
+      const year = String(d.getFullYear()).slice(-2);
       const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
       return {
-        key: `${day}-${month}-${year}`,             // e.g., 19-Aug-25
+        key: `${day}-${month}-${year}`,
         label: `${day}-${month}-${year} [${weekday}]`
       };
     }
@@ -97,40 +93,21 @@
 
     async function loadData() {
       const { today, tomorrow } = setTitles();
-
       try {
-        const res = await fetch(apiUrl(), {
-          // Strong cache bypass
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
-            "Pragma": "no-cache",
-            "Expires": "0"
-          }
-        });
+        const res = await fetch(apiUrl(), { cache: "no-store" });
         const json = await res.json();
 
-        // Detect common mistake: using gid instead of Spreadsheet ID
-        if (String(SHEET_ID).match(/^\d+$/) && (!json.values || json.error)) {
-          const msg = `<div class="no-training">Configuration error: The SHEET_ID looks like a gid (${SHEET_ID}). Use the long Spreadsheet ID from the URL after /d/ and before /edit.</div>`;
-          document.getElementById("todayContent").innerHTML = msg;
-          document.getElementById("tomorrowContent").innerHTML = msg;
-          return;
-        }
-
         if (!json.values || json.values.length < 2) {
-          document.getElementById("todayContent").innerHTML = `<div class="no-training">No training today</div>`;
+          document.getElementById("todayContent").innerHTML    = `<div class="no-training">No training today</div>`;
           document.getElementById("tomorrowContent").innerHTML = `<div class="no-training">No training tomorrow</div>`;
           return;
         }
 
-        // Rows: [ [Date, Day, Name, Venue], ... ]
         const rows = json.values;
-        const data = rows.slice(1) // skip header row
-                         .filter(r => r.some(c => (c || "").trim() !== "")); // ignore fully blank rows
+        const data = rows.slice(1).filter(r => r.some(c => (c || "").trim() !== ""));
 
-        const todaysRows   = data.filter(r => (r[0] || "").trim() === today.key);
-        const tomorrowsRows= data.filter(r => (r[0] || "").trim() === tomorrow.key);
+        const todaysRows    = data.filter(r => (r[0] || "").trim() === today.key);
+        const tomorrowsRows = data.filter(r => (r[0] || "").trim() === tomorrow.key);
 
         document.getElementById("todayContent").innerHTML    = buildTable(todaysRows);
         document.getElementById("tomorrowContent").innerHTML = buildTable(tomorrowsRows);
@@ -142,7 +119,6 @@
       }
     }
 
-    // Initial load + auto-refresh (every 90s)
     document.addEventListener("DOMContentLoaded", () => {
       loadData();
       setInterval(loadData, 90000);
