@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Today's Programs</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- PapaParse for reliable CSV parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
   <!-- Back Button -->
-  <a href="index.html" class="back-btn" aria-label="Back">&#8592;</a>
+  <a href="index.html" class="back-btn">&#8592;</a>
 
   <!-- Page Title + Date Line -->
   <header>
@@ -26,10 +25,9 @@
   </div>
 
   <script>
-    // --- CONFIG: your published CSV ---
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
 
-    // Format date as DD-MMM-YY (e.g., 13-Aug-25) to match your sheet
+    // Format date as DD-MMM-YY
     function formatSheetDate(d) {
       const dd = String(d.getDate()).padStart(2, "0");
       const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -39,10 +37,8 @@
     }
 
     const todayStr = formatSheetDate(new Date());
-    // Set the heading: "Training on 13-Aug-25"
     document.getElementById("dateLine").textContent = `Training on ${todayStr}`;
 
-    // Helpers to render UI
     const tableEl = document.getElementById("programsTable");
     const noDataEl = document.getElementById("noDataMessage");
 
@@ -56,68 +52,56 @@
       noDataEl.style.display = "none";
     }
 
-    // Parse CSV with PapaParse (robust for quotes/commas/newlines)
-    function loadAndRender() {
-      Papa.parse(CSV_URL, {
-        download: true,
-        header: true,           // Use first row as object keys
-        skipEmptyLines: true,
-        complete: function (results) {
-          try {
-            const rows = (results.data || []).map(r => {
-              // Trim all fields to avoid hidden whitespace issues
-              const out = {};
-              for (const k in r) out[k.trim()] = String(r[k] ?? "").trim();
-              return out;
-            });
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        const rows = results.data.map(r => {
+          const out = {};
+          for (const k in r) out[k.trim()] = String(r[k] ?? "").trim();
+          return out;
+        });
 
-            // Filter rows that match today's date in the "Date" column
-            const todays = rows.filter(r => (r["Date"] || "") === todayStr);
+        // Now filter by "Day" column instead of "Date"
+        const todays = rows.filter(r => r["Day"] === todayStr);
 
-            if (!todays.length) {
-              showNoData();
-              return;
-            }
-
-            // Build table HTML
-            let thead = `
-              <thead>
-                <tr>
-                  <th>Sl. No</th>
-                  <th>Day</th>
-                  <th>Name of Training</th>
-                  <th>Venue</th>
-                </tr>
-              </thead>
-            `;
-
-            let tbody = "<tbody>";
-            todays.forEach((r, i) => {
-              const day = r["Day"] || "";
-              const name = r["Name of the Training"] || r["Name"] || "";
-              const venue = r["Venue"] || "";
-              tbody += `
-                <tr>
-                  <td>${i + 1}</td>
-                  <td>${day}</td>
-                  <td>${name}</td>
-                  <td>${venue}</td>
-                </tr>
-              `;
-            });
-            tbody += "</tbody>";
-
-            showTable(thead + tbody);
-          } catch (e) {
-            console.error(e);
-            showNoData();
-          }
-        },
-        error: function (err) {
-          console.error(err);
+        if (!todays.length) {
           showNoData();
+          return;
         }
-      });
-    }
 
-    // Run after PapaPa
+        let thead = `
+          <thead>
+            <tr>
+              <th>Sl. No</th>
+              <th>Day</th>
+              <th>Name of the Training</th>
+              <th>Venue</th>
+            </tr>
+          </thead>
+        `;
+
+        let tbody = "<tbody>";
+        todays.forEach((r, i) => {
+          tbody += `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${r["Day"]}</td>
+              <td>${r["Name of the Training"]}</td>
+              <td>${r["Venue"]}</td>
+            </tr>
+          `;
+        });
+        tbody += "</tbody>";
+
+        showTable(thead + tbody);
+      },
+      error: function (err) {
+        console.error(err);
+        showNoData();
+      }
+    });
+  </script>
+</body>
+</html>
