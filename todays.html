@@ -1,194 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Today's & Tomorrow's Programs</title>
-<link rel="stylesheet" href="style.css">
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-  min-height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-  color: #fff;
-}
-
-/* Back Button */
-.back-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  font-size: 24px;
-  color: white;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-  text-decoration: none;
-}
-.back-btn:hover {transform: scale(1.1); background: rgba(255,255,255,0.3);}
-
-.page-container {
-  max-width: 900px;
-  margin: 80px auto 0;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Block styling */
-.block {
-  border-radius: 15px;
-  padding: 20px;
-  background: rgba(0,0,0,0.8);
-}
-.block.tomorrow {background: rgba(200,200,200,0.2); color:#fff;}
-.block-title {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-thead th {
-  border: 1px solid #fff;
-  padding: 8px;
-  text-align: center;
-  background: rgba(255,255,255,0.2);
-}
-tbody td {
-  border: 1px solid #fff;
-  padding: 8px;
-}
-tbody td.center {text-align: center;}
-tbody tr:nth-child(even) {background: rgba(255,255,255,0.05);}
-
-/* Highlight Opening/Closing */
-.highlight-red {
-  font-weight: bold;
-  color: red;
-  background: rgba(255,200,200,0.3);
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-/* No training */
-.no-data {
-  font-weight: bold;
-  color: red;
-  text-align: center;
-  padding: 15px;
-}
-
-/* Loading */
-.loading {
-  text-align: center;
-  font-size: 16px;
-  padding: 20px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's Programs</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <a href="index.html" class="back-btn">⬅ Back</a>
 
-<a href="index.html" class="back-btn">&#8592;</a>
-
-<div class="page-container">
-  <div id="todayBlock" class="block">
-    <div class="block-title" id="todayTitle">Today: Loading...</div>
-    <div id="todayContent"><div class="loading">Loading…</div></div>
+  <div id="todayBlock" class="card today-card">
+    <h2 id="todayTitle">Today</h2>
+    <div id="todayContent">Loading...</div>
   </div>
 
-  <div id="tomorrowBlock" class="block tomorrow">
-    <div class="block-title" id="tomorrowTitle">Tomorrow: Loading...</div>
-    <div id="tomorrowContent"><div class="loading">Loading…</div></div>
+  <div id="tomorrowBlock" class="card tomorrow-card">
+    <h2 id="tomorrowTitle">Tomorrow</h2>
+    <div id="tomorrowContent">Loading...</div>
   </div>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9rXqiV3oCIIuwRc1nXgwJ4DbYvtwsEAsPAbxUPWwzf_VYGnyJAhCL4TWn4LYs5TiDo13foTLTpY_g/pub?gid=1229350699&single=true&output=csv";
-const AUTO_REFRESH_MS = 90000; // 90 sec
+  <script>
+    const SHEET_ID = "1229350699"; 
+    const API_KEY = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
+    const SHEET_NAME = "Today'sProgram";
 
-function norm(s){return String(s||"").replace(/\u00A0/g,' ').trim();}
+    const API_URL = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}?key=${API_KEY}`;
 
-function highlightDay(day){
-  return day.replace(/\[(Opening|Closing)\]/gi, (m)=>`<span class="highlight-red">${m}</span>`);
-}
+    function formatDate(date) {
+      return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "2-digit" });
+    }
 
-function buildTable(rows){
-  if(!rows.length) return '<div class="no-data">There is no training</div>';
-  let html='<table><thead><tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th></tr></thead><tbody>';
-  rows.forEach((r,i)=>{
-    html+=`<tr>
-      <td class="center">${i+1}</td>
-      <td>${highlightDay(r[1])}</td>
-      <td>${r[2]}</td>
-      <td>${r[3]}</td>
-    </tr>`;
-  });
-  html+='</tbody></table>';
-  return html;
-}
+    function loadPrograms() {
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.values) {
+            document.getElementById("todayContent").innerHTML = "<div class='no-training'>Sheet Empty</div>";
+            return;
+          }
 
-function parseDate(s){
-  const parts=s.split('-');
-  const dd=parseInt(parts[0],10);
-  const mm={"Jan":0,"Feb":1,"Mar":2,"Apr":3,"May":4,"Jun":5,"Jul":6,"Aug":7,"Sep":8,"Oct":9,"Nov":10,"Dec":11}[parts[1]];
-  const yy=2000+parseInt(parts[2],10);
-  return new Date(yy,mm,dd);
-}
-function formatDateWithWeekday(d){
-  const options={weekday:'long',day:'2-digit',month:'short',year:'2-digit'};
-  return d.toLocaleDateString('en-GB',options);
-}
+          const rows = data.values;
+          const programs = rows.slice(1); // skip header row
 
-function loadData(){
-  Papa.parse(CSV_URL+"&_="+Date.now(), {download:true,header:false,skipEmptyLines:true,
-    complete:function(res){
-      const raw=(res.data||[]).map(r=>r.map(c=>norm(c)));
-      if(!raw.length) return;
-      // Assume first row is header
-      const dataRows=raw.slice(1);
+          const today = new Date();
+          today.setHours(0,0,0,0);
 
-      const today=new Date(); today.setHours(0,0,0,0);
-      const tomorrow=new Date(today); tomorrow.setDate(today.getDate()+1);
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
 
-      const todayRows=[], tomorrowRows=[];
-      dataRows.forEach(r=>{
-        const d=parseDate(r[0]);
-        if(d.getTime()===today.getTime()) todayRows.push(r);
-        if(d.getTime()===tomorrow.getTime()) tomorrowRows.push(r);
+          document.getElementById("todayTitle").innerText = 
+            `Today: ${formatDate(today)} [${today.toLocaleDateString("en-US", { weekday: "long" })}]`;
+
+          document.getElementById("tomorrowTitle").innerText = 
+            `Tomorrow: ${formatDate(tomorrow)} [${tomorrow.toLocaleDateString("en-US", { weekday: "long" })}]`;
+
+          renderBlock(programs, today, "todayContent");
+          renderBlock(programs, tomorrow, "tomorrowContent");
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("todayContent").innerHTML = "<div class='no-training'>Error loading data</div>";
+        });
+    }
+
+    function renderBlock(programs, targetDate, containerId) {
+      const filtered = programs.filter(r => {
+        if (!r[0]) return false;
+        const d = new Date(r[0]);
+        d.setHours(0,0,0,0);
+        return d.getTime() === targetDate.getTime();
       });
 
-      document.getElementById('todayTitle').textContent='Today: '+formatDateWithWeekday(today);
-      document.getElementById('tomorrowTitle').textContent='Tomorrow: '+formatDateWithWeekday(tomorrow);
+      const container = document.getElementById(containerId);
 
-      document.getElementById('todayContent').innerHTML=buildTable(todayRows);
-      document.getElementById('tomorrowContent').innerHTML=buildTable(tomorrowRows);
-    },
-    error:function(){console.error("CSV load error");}
-  });
-}
+      if (filtered.length === 0) {
+        container.innerHTML = "<div class='no-training'>There is no training</div>";
+        return;
+      }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  loadData();
-  setInterval(loadData,AUTO_REFRESH_MS);
-});
-</script>
+      let html = "<table><tr>";
+      html += "<th>Sl. No</th><th>Day</th><th>Name of Training</th><th>Venue</th></tr>";
+
+      filtered.forEach((row, idx) => {
+        let day = row[1] || "";
+        if (day.includes("Opening") || day.includes("Closing")) {
+          day = `<span class="highlight-text">${day}</span>`;
+        }
+        html += `<tr>
+          <td>${idx+1}</td>
+          <td>${day}</td>
+          <td>${row[2] || ""}</td>
+          <td>${row[3] || ""}</td>
+        </tr>`;
+      });
+
+      html += "</table>";
+      container.innerHTML = html;
+    }
+
+    loadPrograms();
+    setInterval(loadPrograms, 90000); // refresh every 90s
+  </script>
 </body>
 </html>
