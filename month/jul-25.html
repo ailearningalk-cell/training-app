@@ -3,23 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Programs - July 2025</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Jul/25 Training Programs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
-      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-      color: white;
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
       padding: 20px;
+      box-sizing: border-box;
+      color: white;
     }
     header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      color: white;
     }
     h1 {
       margin: 0;
-      font-size: 26px;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .back-btn {
       position: absolute;
@@ -36,6 +44,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       border: none;
       outline: none;
     }
@@ -43,85 +52,140 @@
       transform: scale(1.1);
       background: rgba(255,255,255,0.3);
     }
+    .page {
+      max-width: 800px;
+      width: 100%;
+      margin-top: 80px;
+      padding: 10px;
+    }
     .card {
-      background: rgba(255,255,255,0.15);
-      border-radius: 16px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
       padding: 20px;
       margin-bottom: 20px;
+      width: 100%;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
-    table {
+    .card h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .styled-table {
       width: 100%;
       border-collapse: collapse;
+      color: white;
     }
-    th, td {
-      border: 1px solid rgba(255,255,255,0.3);
+    .styled-table th, .styled-table td {
+      border: 1px solid rgba(255,255,255,0.5);
       padding: 8px;
+    }
+    .styled-table th {
+      background-color: rgba(255,255,255,0.3);
       text-align: center;
     }
-    th {
-      background: rgba(255,255,255,0.25);
+    .center {
+      text-align: center;
+    }
+    .badge-highlight {
+      font-weight: bold;
+      color: red;
+      background-color: rgba(255,255,255,0.4);
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+    .no-training {
+      text-align: center;
+      padding: 15px;
+      background-color: rgba(255,0,0,0.3);
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <button class="back-btn" onclick="goBack()" aria-label="Go back">
-    ⬅
-  </button>
 
+  <!-- Header -->
   <header>
-    <h1>Programs - July 2025</h1>
+    <h1>Jul/25 Training Programs</h1>
   </header>
 
-  <div class="card">
-    <div id="programs">Loading...</div>
-  </div>
+  <!-- Back button -->
+  <button class="back-btn" onclick="goBack()" aria-label="Go back">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <main class="page">
+    <section class="card">
+      <h2>Jul/25 Programs</h2>
+      <div id="programsContent">
+        <div class="no-training">Loading…</div>
+      </div>
+    </section>
+  </main>
 
   <script>
-    function goBack() {
-      window.location.href = "programs.html"; // go back to all programs
+    const SHEET_ID = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY"; // Jul/25 sheet
+    const API_KEY  = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
+    const SHEET_NAME = "Programs";
+
+    function apiUrl() {
+      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!A2:D?key=${API_KEY}&_=${Date.now()}`;
     }
 
-    async function loadPrograms() {
-      const sheetId = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY"; // your sheet
-      const url = `https://opensheet.elk.sh/${sheetId}/Programs`;
-
-      try {
-        const response = await fetch(url, { cache: "no-store" });
-        const data = await response.json();
-
-        // Filter only July 2025
-        const filtered = data.filter(row => row.Date.includes("Jul-25"));
-
-        renderPrograms(filtered);
-      } catch (error) {
-        document.getElementById("programs").innerHTML = "<p>Error loading data</p>";
+    function highlightDay(text) {
+      if (!text) return "";
+      if (/\[(Opening|Closing)\]/i.test(text)) {
+        return `<span class="badge-highlight">${text}</span>`;
       }
+      return text;
     }
 
-    function renderPrograms(programs) {
-      const container = document.getElementById("programs");
-      if (programs.length === 0) {
-        container.innerHTML = "<p>No programs found for July 2025</p>";
-        return;
+    function buildTable(rows) {
+      if (!rows || rows.length === 0) {
+        return `<div class="no-training">No training available for Jul/25</div>`;
       }
-
-      let table = `<table>
-        <tr><th>Sl. No</th><th>Date</th><th>Day</th><th>Training</th><th>Venue</th></tr>`;
-      programs.forEach((row, index) => {
-        table += `<tr>
-          <td>${index + 1}</td>
-          <td>${row.Date}</td>
-          <td>${row.Day}</td>
-          <td>${row["Name of the Training"]}</td>
-          <td>${row.Venue}</td>
+      let html = `<table class="styled-table">
+        <thead>
+          <tr>
+            <th>Sl. No</th>
+            <th>Day</th>
+            <th>Name of Training</th>
+            <th>Venue</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      rows.forEach((r, i) => {
+        const dayVal = highlightDay(r[1] || "");
+        html += `<tr>
+          <td class="center">${i + 1}</td>
+          <td>${dayVal}</td>
+          <td>${r[2] || ""}</td>
+          <td>${r[3] || ""}</td>
         </tr>`;
       });
-      table += `</table>`;
-      container.innerHTML = table;
+      html += `</tbody></table>`;
+      return html;
     }
 
-    loadPrograms();
+    async function loadData() {
+      try {
+        const res = await fetch(apiUrl(), { cache: "no-store" });
+        const json = await res.json();
+        const rows = json.values || [];
+        const data = rows.filter(r => r.some(c => (c || "").trim() !== ""));
+        document.getElementById("programsContent").innerHTML = buildTable(data);
+      } catch(e) {
+        console.error(e);
+        document.getElementById("programsContent").innerHTML = `<div class="no-training">Error loading data</div>`;
+      }
+    }
+
+    function goBack() {
+      window.location.href = "../index.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", loadData);
   </script>
 </body>
 </html>
