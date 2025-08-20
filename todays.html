@@ -9,7 +9,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #3acfd5, #3a4ed5); /* match homepage */
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -107,12 +107,12 @@
   <!-- Content -->
   <div class="container">
     <div class="card">
-      <h2>Today's Programs</h2>
+      <h2 id="todayHeader">Today</h2>
       <div id="todayPrograms">Loading...</div>
     </div>
 
     <div class="card">
-      <h2>Tomorrow's Programs</h2>
+      <h2 id="tomorrowHeader">Tomorrow</h2>
       <div id="tomorrowPrograms">Loading...</div>
     </div>
   </div>
@@ -122,7 +122,23 @@
       window.location.href = "index.html";
     }
 
-    // Fetch data from Google Sheet
+    // Format header date: "20 Aug 25 [Wed]"
+    function formatHeaderDate(dateObj) {
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = dateObj.toLocaleString("en-US", { month: "short" });
+      const year = dateObj.getFullYear().toString().slice(-2);
+      const weekday = dateObj.toLocaleString("en-US", { weekday: "short" });
+      return `${day} ${month} ${year} [${weekday}]`;
+    }
+
+    // Format sheet date: "20-Aug-25"
+    function formatSheetDate(dateObj) {
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      const month = dateObj.toLocaleString("en-US", { month: "short" });
+      const year = dateObj.getFullYear().toString().slice(-2);
+      return `${day}-${month}-${year}`;
+    }
+
     async function loadPrograms() {
       const sheetId = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co";
       const url = `https://opensheet.elk.sh/${sheetId}/Programs`;
@@ -135,15 +151,12 @@
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        const formatDate = d => {
-          const day = String(d.getDate()).padStart(2, "0");
-          const month = d.toLocaleString("en-US", { month: "short" });
-          const year = d.getFullYear().toString().slice(-2);
-          return `${day}-${month}-${year}`;
-        };
+        const todayStr = formatSheetDate(today);
+        const tomorrowStr = formatSheetDate(tomorrow);
 
-        const todayStr = formatDate(today);
-        const tomorrowStr = formatDate(tomorrow);
+        // Set headers
+        document.getElementById("todayHeader").innerText = `Today: ${formatHeaderDate(today)}`;
+        document.getElementById("tomorrowHeader").innerText = `Tomorrow: ${formatHeaderDate(tomorrow)}`;
 
         // Filter programs
         const todayPrograms = data.filter(row => row.Date === todayStr);
@@ -165,10 +178,10 @@
         return;
       }
       let table = `<table class="styled-table">
-        <tr><th>Date</th><th>Day</th><th>Training</th><th>Venue</th></tr>`;
-      programs.forEach(row => {
+        <tr><th>Sl. No</th><th>Day</th><th>Training</th><th>Venue</th></tr>`;
+      programs.forEach((row, index) => {
         table += `<tr>
-          <td>${row.Date}</td>
+          <td>${index + 1}</td>
           <td>${row.Day}</td>
           <td>${row["Name of the Training"]}</td>
           <td>${row.Venue}</td>
