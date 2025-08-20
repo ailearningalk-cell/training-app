@@ -1,102 +1,91 @@
-/* === Global backgrounds === */
-body.home {
+/* Light gradient + dark text — same vibe as your programs page */
+body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: linear-gradient(to right, #dfe9f3, #ffffff);
+  color: #0f172a;
   min-height: 100vh;
-  flex-direction: column;
-  padding: 20px;
   box-sizing: border-box;
-  color: white;
 }
 
-body.programs {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-  color: white;
-  min-height: 100vh;
-}
-
-/* === Shared page layout === */
+/* Page container */
 .page {
-  max-width: 900px;
+  max-width: 800px;
   margin: 20px auto;
   padding: 10px;
 }
 
+/* Back button (dark text to match theme) */
 .back-btn {
   display: inline-block;
-  margin: 15px;
+  margin: 15px 0;
   text-decoration: none;
   font-size: 22px;
-  color: white;
+  color: #0f172a;
 }
 
-/* === Card Styles === */
+/* Cards (same shape/feel as your earlier “programs”) */
 .card {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  backdrop-filter: blur(8px);
+  background: #ffffffcc;             /* translucent white */
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Today = slightly warmer highlight */
+.card-today { background: #fef9c3; }  /* light yellow */
+
+/* Tomorrow = soft gray */
+.card-tomorrow { background: #f3f4f6; }
+
+/* Card titles */
 .card h2 {
-  margin: 0 0 15px 0;
-  font-size: 22px;
+  margin: 0 0 10px 0;
+  font-size: 20px;
   text-align: center;
-  color: white;
 }
 
-/* Today special tint */
-.card-today {
-  border: 2px solid #fde047;
-}
-
-/* Tomorrow softer tint */
-.card-tomorrow {
-  border: 2px solid #e5e7eb;
-}
-
-/* === Table === */
+/* Table */
 .styled-table {
   width: 100%;
   border-collapse: collapse;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .styled-table th, .styled-table td {
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid #ddd;
   padding: 10px;
-  color: white;
 }
 
 .styled-table th {
-  background-color: rgba(255,255,255,0.2);
+  background-color: #e5e7eb;
   text-align: center;
 }
 
-/* === Extra === */
-.center {
-  text-align: center;
-}
+.center { text-align: center; }
 
+/* Opening / Closing badge */
 .badge-highlight {
   font-weight: bold;
-  color: yellow;
-  background-color: rgba(255, 255, 255, 0.2);
+  color: #b91c1c;           /* red-700 */
+  background-color: #ffe4e6;/* rose-100 */
   padding: 2px 6px;
   border-radius: 6px;
 }
 
+/* No training message */
 .no-training {
   text-align: center;
-  padding: 15px;
-  background-color: rgba(255, 0, 0, 0.3);
-  border-radius: 12px;
-  color: #fff5f5;
+  padding: 14px 16px;
+  background-color: #fee2e2; /* rose-200 */
+  border-radius: 10px;
+  color: #991b1b;           /* red-800 */
+  font-weight: 600;
 }
+
+/* Loading text */
+.loading { opacity: 0.7; text-align: center; }
