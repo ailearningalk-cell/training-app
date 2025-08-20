@@ -31,6 +31,10 @@
     border: none;
     outline: none;
 }
+    .back-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.3);
+    }
     
 
     /* make sure tables show white text on the glass cards */
@@ -61,8 +65,11 @@
   </style>
 </head>
 <body>
-  <!-- Back button like programs.html -->
-  <a class="back-btn" href="programs.html" title="Back to Programs">←</a>
+
+  <!-- Back button -->
+  <button class="back-btn" onclick="goBack()" aria-label="Go back">
+    <i class="fas fa-arrow-left"></i>
+  </button>
 
   <main class="page">
     <section class="card card-today">
