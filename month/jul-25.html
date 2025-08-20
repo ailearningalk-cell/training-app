@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programs - July 2025</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: none;
+      outline: none;
+    }
+    .back-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.3);
+    }
+    .card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: rgba(255,255,255,0.25);
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="goBack()" aria-label="Go back">
+    ⬅
+  </button>
 
+  <header>
+    <h1>Programs - July 2025</h1>
+  </header>
+
+  <div class="card">
+    <div id="programs">Loading...</div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.location.href = "programs.html"; // go back to all programs
+    }
+
+    async function loadPrograms() {
+      const sheetId = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY"; // your sheet
+      const url = `https://opensheet.elk.sh/${sheetId}/Programs`;
+
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        const data = await response.json();
+
+        // Filter only July 2025
+        const filtered = data.filter(row => row.Date.includes("Jul-25"));
+
+        renderPrograms(filtered);
+      } catch (error) {
+        document.getElementById("programs").innerHTML = "<p>Error loading data</p>";
+      }
+    }
+
+    function renderPrograms(programs) {
+      const container = document.getElementById("programs");
+      if (programs.length === 0) {
+        container.innerHTML = "<p>No programs found for July 2025</p>";
+        return;
+      }
+
+      let table = `<table>
+        <tr><th>Sl. No</th><th>Date</th><th>Day</th><th>Training</th><th>Venue</th></tr>`;
+      programs.forEach((row, index) => {
+        table += `<tr>
+          <td>${index + 1}</td>
+          <td>${row.Date}</td>
+          <td>${row.Day}</td>
+          <td>${row["Name of the Training"]}</td>
+          <td>${row.Venue}</td>
+        </tr>`;
+      });
+      table += `</table>`;
+      container.innerHTML = table;
+    }
+
+    loadPrograms();
+  </script>
+</body>
+</html>
