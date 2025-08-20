@@ -1,88 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Today's Programs</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Today's & Tomorrow's Programs</title>
+
+  <!-- Your existing stylesheet (kept) -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Minimal overrides to match programs.html (teal→blue gradient, glassy cards, white text) -->
+  <style>
+    body {
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5) !important;
+      color: white !important;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .page {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin: 15px;
+      text-decoration: none;
+      font-size: 22px;
+      color: white !important;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      color: white;
+      backdrop-filter: blur(8px);
+    }
+    .card-today { border: 2px solid #fde047; }   /* subtle highlight */
+    .card-tomorrow { border: 2px solid rgba(255,255,255,0.4); }
+
+    .card h2 {
+      margin: 0 0 15px 0;
+      font-size: 20px;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .styled-table th, .styled-table td {
+      border: 1px solid rgba(255,255,255,0.35);
+      padding: 10px;
+      color: white;
+    }
+    .styled-table th {
+      background-color: rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    .center { text-align: center; }
+
+    .badge-highlight {
+      font-weight: bold;
+      color: #ffccd5;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .no-training {
+      text-align: center;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: #ffe4e6;
+      font-weight: bold;
+    }
+    .loading { opacity: 0.9; text-align: center; }
+  </style>
 </head>
-
 <body>
-  <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+  <!-- Back -->
+  <a href="index.html" class="back-btn" aria-label="Back">&#8592;</a>
 
-  <div class="page">
-    <div class="card card-today">
+  <main class="page">
+    <!-- Today -->
+    <section class="card card-today">
       <h2 id="todayTitle">Today</h2>
-      <div id="todayContent">Loading...</div>
-    </div>
+      <div id="todayContent"><div class="loading">Loading…</div></div>
+    </section>
 
-    <div class="card card-tomorrow">
+    <!-- Tomorrow -->
+    <section class="card card-tomorrow">
       <h2 id="tomorrowTitle">Tomorrow</h2>
-      <div id="tomorrowContent">Loading...</div>
-    </div>
-  </div>
+      <div id="tomorrowContent"><div class="loading">Loading…</div></div>
+    </section>
+  </main>
 
   <script>
-    const apiKey = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
-    const sheetId = "1229350699";
-    const sheetName = "Programs"; // updated sheet tab name
-    const base = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}?key=${apiKey}`;
+    // === CONFIG: use your real Spreadsheet ID (the long id between /d/ and /edit), key & tab name ===
+    const SHEET_ID   = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co"; // ✅ spreadsheet ID (NOT gid)
+    const API_KEY    = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
+    const SHEET_NAME = "Programs"; // your tab name
+    const RANGE      = "A1:D";     // Date | Day | Name | Venue
 
-    async function fetchSheet() {
+    // Build API URL + timestamp to crush caches
+    function apiUrl() {
+      const ts = Date.now();
+      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!${RANGE}?valueRenderOption=FORMATTED_VALUE&dateTimeRenderOption=FORMATTED_STRING&key=${API_KEY}&_=${ts}`;
+    }
+
+    // Format “DD-MMM-YY [Weekday]” + a key “DD-MMM-YY” to match sheet
+    function keyAndLabel(date) {
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const day = String(d.getDate()).padStart(2, '0');
+      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      const month = months[d.getMonth()];
+      const year = String(d.getFullYear()).slice(-2);
+      const weekday = d.toLocaleDateString("en-US", { weekday: "long" });
+      return { key: `${day}-${month}-${year}`, label: `${day}-${month}-${year} [${weekday}]` };
+    }
+
+    // Turn anything plausible into “DD-MMM-YY” (accepts 19-Aug-25, 2025-08-19, 19/08/2025, 8/19/2025, etc.)
+    function normalizeCellDate(cell) {
+      if (cell == null) return null;
+      const s = String(cell).trim();
+
+      // Already formatted like “19-Aug-25” or “19-Aug-2025”
+      if (/^\d{2}-[A-Za-z]{3}-\d{2,4}$/.test(s)) {
+        const [dd, mon, yy] = s.split("-");
+        const year = yy.length === 2 ? `20${yy}` : yy;
+        const d = new Date(`${mon} ${dd}, ${year}`);
+        if (!isNaN(d)) {
+          const day = String(d.getDate()).padStart(2, '0');
+          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          const month = months[d.getMonth()];
+          const y2 = String(d.getFullYear()).slice(-2);
+          return `${day}-${month}-${y2}`;
+        }
+      }
+
+      // ISO or other parsable formats
+      const iso = new Date(s);
+      if (!isNaN(iso)) {
+        const d = iso;
+        const day = String(d.getDate()).padStart(2, '0');
+        const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+        const month = months[d.getMonth()];
+        const year = String(d.getFullYear()).slice(-2);
+        return `${day}-${month}-${year}`;
+      }
+
+      // Explicit DD/MM/YYYY or MM/DD/YYYY
+      const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (m) {
+        let a = parseInt(m[1],10), b = parseInt(m[2],10), y = parseInt(m[3],10);
+        if (y < 100) y += 2000;
+        let D, M;
+        if (a > 12) { D = a; M = b - 1; }      // DD/MM/YYYY
+        else if (b > 12) { D = b; M = a - 1; } // MM/DD/YYYY
+        else { D = a; M = b - 1; }             // assume DD/MM/YYYY
+        const d = new Date(y, M, D);
+        if (!isNaN(d)) {
+          const day = String(d.getDate()).padStart(2, '0');
+          const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          const month = months[d.getMonth()];
+          const y2 = String(d.getFullYear()).slice(-2);
+          return `${day}-${month}-${y2}`;
+        }
+      }
+      return null;
+    }
+
+    function highlightDay(text) {
+      if (!text) return "";
+      return /\[(Opening|Closing)\]/i.test(text)
+        ? `<span class="badge-highlight">${text}</span>`
+        : text;
+    }
+
+    function buildTable(rows) {
+      if (!rows || rows.length === 0) {
+        return `<div class="no-training">No training today</div>`;
+      }
+      let html = `<table class="styled-table"><thead><tr>
+        <th>Sl. No</th>
+        <th>Day</th>
+        <th>Name of the Training</th>
+        <th>Venue</th>
+      </tr></thead><tbody>`;
+      rows.forEach((r, i) => {
+        const dayVal = highlightDay(r[1] || "");
+        html += `<tr>
+          <td class="center">${i + 1}</td>
+          <td>${dayVal}</td>
+          <td>${r[2] || ""}</td>
+          <td>${r[3] || ""}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      return html;
+    }
+
+    function setTitles() {
+      const now = new Date();
+      const t  = keyAndLabel(now);
+      const tm = keyAndLabel(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+      document.getElementById("todayTitle").textContent    = `Today: ${t.label}`;
+      document.getElementById("tomorrowTitle").textContent = `Tomorrow: ${tm.label}`;
+      return { today: t, tomorrow: tm };
+    }
+
+    async function loadData() {
+      const { today, tomorrow } = setTitles();
+      const todayBox    = document.getElementById("todayContent");
+      const tomorrowBox = document.getElementById("tomorrowContent");
+
       try {
-        const response = await fetch(base, { cache: "no-store" });
-        const data = await response.json();
+        const res  = await fetch(apiUrl(), {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+          }
+        });
+        const json = await res.json();
 
-        if (!data.values || data.values.length < 2) {
-          document.getElementById("todayContent").innerHTML = '<div class="no-training">No training today</div>';
-          document.getElementById("tomorrowContent").innerHTML = '<div class="no-training">No training tomorrow</div>';
+        if (!json.values || json.values.length === 0) {
+          todayBox.innerHTML    = `<div class="no-training">No training today</div>`;
+          tomorrowBox.innerHTML = `<div class="no-training">No training tomorrow</div>`;
           return;
         }
 
-        const rows = data.values.slice(1);
-        const today = new Date();
-        const tomorrow = new Date();
-        tomorrow.setDate(today.getDate() + 1);
+        const rows = json.values;
 
-        const todayStr = today.toLocaleDateString("en-GB");
-        const tomorrowStr = tomorrow.toLocaleDateString("en-GB");
-
-        document.getElementById("todayTitle").textContent =
-          `Today: ${todayStr} [${today.toLocaleDateString("en-US", { weekday: "long" })}]`;
-        document.getElementById("tomorrowTitle").textContent =
-          `Tomorrow: ${tomorrowStr} [${tomorrow.toLocaleDateString("en-US", { weekday: "long" })}]`;
-
-        function render(dateStr, elementId) {
-          const filtered = rows.filter(r => r[0] === dateStr);
-          if (filtered.length === 0) {
-            document.getElementById(elementId).innerHTML = '<div class="no-training">No training</div>';
-          } else {
-            let html = `<table class="styled-table"><tr>`;
-            data.values[0].forEach(h => html += `<th>${h}</th>`);
-            html += `</tr>`;
-            filtered.forEach(r => {
-              html += "<tr>";
-              r.forEach(c => html += `<td>${c}</td>`);
-              html += "</tr>";
-            });
-            html += "</table>";
-            document.getElementById(elementId).innerHTML = html;
+        // Find header row (look for "date" & "venue" within first 5 rows)
+        let headerIdx = 0;
+        for (let i = 0; i < Math.min(5, rows.length); i++) {
+          const row = rows[i].map(v => (v || "").toLowerCase());
+          if (row.includes("date") && row.some(c => c.includes("venue"))) {
+            headerIdx = i;
+            break;
           }
         }
 
-        render(todayStr, "todayContent");
-        render(tomorrowStr, "tomorrowContent");
+        // Data rows, ignoring fully blank lines
+        const data = rows.slice(headerIdx + 1)
+                         .filter(r => r && r.some(c => (c || "").trim() !== ""));
 
-      } catch (e) {
-        document.getElementById("todayContent").textContent = "Error loading data";
-        document.getElementById("tomorrowContent").textContent = "Error loading data";
+        // Match normalized sheet dates to today's/tomorrow's keys
+        const todaysRows    = data.filter(r => normalizeCellDate(r[0]) === today.key);
+        const tomorrowsRows = data.filter(r => normalizeCellDate(r[0]) === tomorrow.key);
+
+        todayBox.innerHTML    = buildTable(todaysRows);
+        tomorrowBox.innerHTML = buildTable(tomorrowsRows);
+
+      } catch (err) {
+        console.error(err);
+        todayBox.innerHTML    = `<div class="no-training">Error loading data</div>`;
+        tomorrowBox.innerHTML = `<div class="no-training">Error loading data</div>`;
       }
     }
 
-    fetchSheet();
+    document.addEventListener("DOMContentLoaded", () => {
+      loadData();
+      setInterval(loadData, 60000); // refresh every 60s
+    });
   </script>
 </body>
-
 </html>
