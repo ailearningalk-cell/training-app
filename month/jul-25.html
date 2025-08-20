@@ -31,7 +31,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       padding: 16px;
-      overflow-x: auto;
+      overflow-x: auto; /* allow scroll only if table is larger than screen */
     }
 
     table {
@@ -43,40 +43,17 @@
     th, td {
       padding: 10px;
       border: 1px solid #e5e7eb;
-      text-align: left;
     }
 
     th {
       background: #f3f4f6;
       font-weight: 600;
+      text-align: center; /* all headers centered */
     }
 
-    @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      thead {
-        display: none;
-      }
-      tr {
-        margin-bottom: 12px;
-        border-bottom: 2px solid #f3f4f6;
-      }
-      td {
-        border: none;
-        position: relative;
-        padding-left: 50%;
-        text-align: right;
-      }
-      td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        font-weight: 600;
-        text-align: left;
-      }
+    /* center-align certain columns */
+    td.center {
+      text-align: center;
     }
   </style>
 </head>
@@ -129,14 +106,20 @@
       });
       thead.appendChild(tr);
 
-      // Render body
+      // Render body rows
       tbody.innerHTML = "";
       rows.forEach(row => {
         const tr = document.createElement("tr");
         row.forEach((val, i) => {
           const td = document.createElement("td");
           td.textContent = val;
-          td.setAttribute("data-label", columns[i]);
+
+          // Center align certain columns
+          const colName = columns[i].toLowerCase();
+          if (["sl. no", "no of participants", "duration", "remarks"].some(name => colName.includes(name))) {
+            td.classList.add("center");
+          }
+
           tr.appendChild(td);
         });
         tbody.appendChild(tr);
