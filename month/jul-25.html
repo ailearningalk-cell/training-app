@@ -1,191 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jul/25 Training Programs</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Training Programs – July 2025</title>
   <style>
+    /* Reset minimal stuff */
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-      padding: 20px;
-      box-sizing: border-box;
-      color: white;
+      padding: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Inter, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
     }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-      color: white;
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 16px;
     }
+
     h1 {
-      margin: 0;
-      font-size: 28px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      font-size: 1.8em;
+      text-align: center;
+      margin-bottom: 24px;
     }
-    .back-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      font-size: 22px;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-      background: rgba(255,255,255,0.2);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      border: none;
-      outline: none;
-    }
-    .back-btn:hover {
-      transform: scale(1.1);
-      background: rgba(255,255,255,0.3);
-    }
-    .page {
-      max-width: 800px;
+
+    .sheet-embed {
+      position: relative;
       width: 100%;
-      margin-top: 80px;
-      padding: 10px;
-    }
-    .card {
-      background: rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
-      width: 100%;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-    .card h2 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .styled-table {
-      width: 100%;
-      border-collapse: collapse;
-      color: white;
-    }
-    .styled-table th, .styled-table td {
-      border: 1px solid rgba(255,255,255,0.5);
-      padding: 8px;
-    }
-    .styled-table th {
-      background-color: rgba(255,255,255,0.3);
-      text-align: center;
-    }
-    .center {
-      text-align: center;
-    }
-    .badge-highlight {
-      font-weight: bold;
-      color: red;
-      background-color: rgba(255,255,255,0.4);
-      padding: 2px 5px;
-      border-radius: 4px;
-    }
-    .no-training {
-      text-align: center;
-      padding: 15px;
-      background-color: rgba(255,0,0,0.3);
+      /* Maintain 4:3 or adjust aspect ratio as needed */
+      padding-bottom: 75%;
+      height: 0;
+      overflow: hidden;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      color: white;
-      font-weight: bold;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .sheet-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 8px;
+      }
+
+      h1 {
+        font-size: 1.4em;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- Header -->
-  <header>
-    <h1>Jul/25 Training Programs</h1>
-  </header>
-
-  <!-- Back button -->
-  <button class="back-btn" onclick="goBack()" aria-label="Go back">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-
-  <main class="page">
-    <section class="card">
-      <h2>Jul/25 Programs</h2>
-      <div id="programsContent">
-        <div class="no-training">Loading…</div>
-      </div>
-    </section>
-  </main>
-
-  <script>
-    const SHEET_ID = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY"; // Jul/25 sheet
-    const API_KEY  = "AIzaSyB1VwkzfKyybV_QeC8AQDPHSkBPRqfKH2g";
-    const SHEET_NAME = "Programs";
-
-    function apiUrl() {
-      return `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(SHEET_NAME)}!A2:D?key=${API_KEY}&_=${Date.now()}`;
-    }
-
-    function highlightDay(text) {
-      if (!text) return "";
-      if (/\[(Opening|Closing)\]/i.test(text)) {
-        return `<span class="badge-highlight">${text}</span>`;
-      }
-      return text;
-    }
-
-    function buildTable(rows) {
-      if (!rows || rows.length === 0) {
-        return `<div class="no-training">No training available for Jul/25</div>`;
-      }
-      let html = `<table class="styled-table">
-        <thead>
-          <tr>
-            <th>Sl. No</th>
-            <th>Day</th>
-            <th>Name of Training</th>
-            <th>Venue</th>
-          </tr>
-        </thead>
-        <tbody>`;
-      rows.forEach((r, i) => {
-        const dayVal = highlightDay(r[1] || "");
-        html += `<tr>
-          <td class="center">${i + 1}</td>
-          <td>${dayVal}</td>
-          <td>${r[2] || ""}</td>
-          <td>${r[3] || ""}</td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-      return html;
-    }
-
-    async function loadData() {
-      try {
-        const res = await fetch(apiUrl(), { cache: "no-store" });
-        const json = await res.json();
-        const rows = json.values || [];
-        const data = rows.filter(r => r.some(c => (c || "").trim() !== ""));
-        document.getElementById("programsContent").innerHTML = buildTable(data);
-      } catch(e) {
-        console.error(e);
-        document.getElementById("programsContent").innerHTML = `<div class="no-training">Error loading data</div>`;
-      }
-    }
-
-    function goBack() {
-      window.location.href = "../index.html";
-    }
-
-    document.addEventListener("DOMContentLoaded", loadData);
-  </script>
+  <div class="container">
+    <h1>Training Programs – July 2025</h1>
+    <div class="sheet-embed">
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQwnzCqUHcH4Gv9dmV-l4qJGeXYNnnHXuuu22ZYGITNtEMRykPzFP3xp-pzQOyaYDKIGk3DdCLuf0DD/pubhtml?gid=458904660&single=true"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
 </body>
 </html>
