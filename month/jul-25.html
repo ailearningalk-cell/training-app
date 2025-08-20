@@ -3,223 +3,147 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sheet → HTML Table</title>
+  <title>Training Programs – July 2025</title>
   <style>
-    :root { --bg:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#94a3b8; --accent:#22d3ee; --row:#0b1220; }
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(135deg,#0b1020,#0f172a);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,sans-serif;color:var(--text)}
-    .wrap{max-width:1200px;margin:40px auto;padding:0 16px}
-    .header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
-    .title{font-size:clamp(18px,3vw,26px);font-weight:700;letter-spacing:.3px}
-    .controls{display:flex;flex-wrap:wrap;gap:10px}
-    .input, .btn{
-      background:#0b1220;border:1px solid #1f2937;color:var(--text);
-      padding:10px 12px;border-radius:12px;font-size:14px;outline:none;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Inter, sans-serif;
+      background: #f9fafb;
+      color: #111;
     }
-    .input{min-width:220px}
-    .btn{cursor:pointer}
-    .btn:hover{border-color:#334155}
-    .card{background:var(--card);border:1px solid #1f2937;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.3);overflow:hidden}
-    .table-wrap{overflow:auto;max-height:75vh}
-    table{border-collapse:separate;border-spacing:0;width:100%;min-width:680px}
-    thead th{
-      position:sticky;top:0;background:#0d1326;color:var(--muted);
-      font-weight:600;text-align:left;padding:12px;border-bottom:1px solid #1f2937;
-      white-space:nowrap; user-select:none; cursor:pointer;
+
+    .wrap {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 16px;
     }
-    tbody td{padding:12px;border-bottom:1px solid #1f2937}
-    tbody tr:nth-child(even){background:var(--row)}
-    .count{color:var(--muted);font-size:13px;margin:10px 4px}
-    .chip{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;background:#0b1220;border:1px solid #1f2937;border-radius:999px;font-size:12px;color:var(--muted)}
-    .sort-ind{font-size:12px;opacity:.7}
-    .footer{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;color:var(--muted);border-top:1px solid #1f2937}
-    .paginate{display:flex;gap:6px}
-    .page-btn{padding:6px 10px;border:1px solid #1f2937;background:#0b1220;color:var(--text);border-radius:10px;cursor:pointer}
-    .page-btn[disabled]{opacity:.4;cursor:not-allowed}
-    .limit{padding:6px 8px;border:1px solid #1f2937;background:#0b1220;color:var(--text);border-radius:10px}
+
+    .title {
+      font-size: 1.6em;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead {
+        display: none;
+      }
+      tr {
+        margin-bottom: 12px;
+        border-bottom: 2px solid #f3f4f6;
+      }
+      td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        font-weight: 600;
+        text-align: left;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="header">
-      <div class="title">Google Sheet → HTML</div>
-      <div class="controls">
-        <input id="search" class="input" placeholder="Search…" />
-        <select id="limit" class="limit" title="Rows per page">
-          <option>25</option><option>50</option><option selected>100</option><option>200</option><option>All</option>
-        </select>
-        <button id="downloadCsv" class="btn">Download CSV</button>
-        <span id="meta" class="chip">Loading…</span>
-      </div>
-    </div>
-
+    <div class="title">Training Programs in July-2025</div>
     <div class="card">
-      <div class="table-wrap">
-        <table id="grid">
-          <thead id="thead"></thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-      <div class="footer">
-        <div id="count" class="count"></div>
-        <div class="paginate">
-          <button id="prev" class="page-btn">Prev</button>
-          <button id="next" class="page-btn">Next</button>
-        </div>
-      </div>
+      <table id="grid">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
     </div>
   </div>
 
   <script>
-  // === CONFIG: your sheet ===
-  const SHEET_ID = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY";
-  const GID = "458904660";
+    // === CONFIG: your sheet ===
+    const SHEET_ID = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY";
+    const GID = "458904660";
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&tqx=out:json`;
 
-  // Build the gviz JSON URL
-  const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&tqx=out:json`;
+    async function loadSheet() {
+      try {
+        const r = await fetch(GVIZ_URL);
+        const text = await r.text();
+        const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+        const table = json.table;
 
-  // State
-  let columns = [];
-  let rows = [];           // Array of arrays (strings)
-  let filtered = [];
-  let sortState = { idx: 0, dir: 1 }; // 1 asc, -1 desc
-  let page = 0;
-  let perPage = 100;
+        const columns = table.cols.map(c => c.label || c.id || "");
+        const rows = table.rows
+          .map(r => (r.c || []).map(cell => cell ? (cell.f ?? cell.v ?? "") : ""))
+          .filter(r => r.some(v => v !== ""));
 
-  const el = (id) => document.getElementById(id);
-  const thead = el("thead"), tbody = el("tbody");
-  const search = el("search"), count = el("count"), meta = el("meta");
-  const nextBtn = el("next"), prevBtn = el("prev");
-  const limitSel = el("limit"), downloadCsvBtn = el("downloadCsv");
-
-  // Fetch & parse gviz JSON (strip the wrapper)
-  async function loadSheet() {
-    try {
-      const r = await fetch(GVIZ_URL);
-      const text = await r.text();
-      const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
-      const table = json.table;
-
-      columns = table.cols.map(c => c.label || c.id || "");
-      rows = table.rows
-        .map(r => (r.c || []).map(cell => cell ? (cell.f ?? cell.v ?? "") : ""))
-        .filter(r => r.some(v => v !== "")); // drop completely empty rows
-
-      filtered = rows.slice();
-      renderHeader();
-      applySearch();
-      meta.textContent = `Last updated: ${new Date().toLocaleString()}`;
-    } catch (e) {
-      console.error(e);
-      meta.textContent = "Failed to load (check sharing permissions).";
+        render(columns, rows);
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
 
-  function renderHeader() {
-    thead.innerHTML = "";
-    const tr = document.createElement("tr");
-    columns.forEach((col, idx) => {
-      const th = document.createElement("th");
-      th.textContent = col || `Column ${idx+1}`;
-      th.title = "Click to sort";
-      th.addEventListener("click", () => {
-        if (sortState.idx === idx) sortState.dir *= -1; else { sortState.idx = idx; sortState.dir = 1; }
-        sortData();
-        page = 0;
-        renderBody();
-        updateSortIndicators();
-      });
-      tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-    updateSortIndicators();
-  }
+    function render(columns, rows) {
+      const thead = document.getElementById("thead");
+      const tbody = document.getElementById("tbody");
 
-  function updateSortIndicators() {
-    // Add ▲/▼ markers
-    [...thead.querySelectorAll("th")].forEach((th, i) => {
-      th.innerHTML = (columns[i] || `Column ${i+1}`) +
-        (i === sortState.idx ? ` <span class="sort-ind">${sortState.dir === 1 ? "▲" : "▼"}</span>` : "");
-    });
-  }
-
-  function sortData() {
-    const idx = sortState.idx, dir = sortState.dir;
-    const isNumbery = filtered.every(r => r[idx] === "" || !isNaN(Number(String(r[idx]).replace(/,/g,""))));
-    filtered.sort((a,b) => {
-      let va = a[idx] ?? "", vb = b[idx] ?? "";
-      if (isNumbery) { va = Number(String(va).replace(/,/g,"")); vb = Number(String(vb).replace(/,/g,"")); }
-      else { va = String(va).toLowerCase(); vb = String(vb).toLowerCase(); }
-      if (va < vb) return -1 * dir;
-      if (va > vb) return  1 * dir;
-      return 0;
-    });
-  }
-
-  function renderBody() {
-    tbody.innerHTML = "";
-    const total = filtered.length;
-    const start = perPage === Infinity ? 0 : page * perPage;
-    const end = perPage === Infinity ? total : Math.min(start + perPage, total);
-
-    for (let i = start; i < end; i++) {
+      // Render header row
+      thead.innerHTML = "";
       const tr = document.createElement("tr");
-      filtered[i].forEach(val => {
-        const td = document.createElement("td");
-        td.textContent = val === null || val === undefined ? "" : val;
-        tr.appendChild(td);
+      columns.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        tr.appendChild(th);
       });
-      tbody.appendChild(tr);
+      thead.appendChild(tr);
+
+      // Render body
+      tbody.innerHTML = "";
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach((val, i) => {
+          const td = document.createElement("td");
+          td.textContent = val;
+          td.setAttribute("data-label", columns[i]);
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
     }
 
-    count.textContent = total
-      ? `Showing ${perPage===Infinity?total:(start+1)}–${perPage===Infinity?total:end} of ${total} rows`
-      : `No rows`;
-
-    prevBtn.disabled = page <= 0;
-    nextBtn.disabled = perPage === Infinity || end >= total;
-  }
-
-  function applySearch() {
-    const q = search.value.trim().toLowerCase();
-    if (!q) filtered = rows.slice();
-    else {
-      filtered = rows.filter(r => r.some(v => String(v).toLowerCase().includes(q)));
-    }
-    sortData();
-    page = 0;
-    renderBody();
-  }
-
-  function exportCsv() {
-    const data = [columns, ...filtered];
-    const csv = data.map(row =>
-      row.map(v => {
-        const s = String(v ?? "");
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
-      }).join(",")
-    ).join("\n");
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "sheet-data.csv";
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  // Events
-  search.addEventListener("input", () => applySearch());
-  nextBtn.addEventListener("click", () => { page++; renderBody(); });
-  prevBtn.addEventListener("click", () => { page = Math.max(0, page-1); renderBody(); });
-  limitSel.addEventListener("change", () => {
-    const val = limitSel.value;
-    perPage = val === "All" ? Infinity : parseInt(val,10);
-    page = 0; renderBody();
-  });
-  downloadCsvBtn.addEventListener("click", exportCsv);
-
-  // Go!
-  loadSheet();
+    loadSheet();
   </script>
 </body>
 </html>
