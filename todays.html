@@ -1,268 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Today's Programs</title>
-
-  <!-- Use your existing stylesheet so layout matches programs.html -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- small safe overrides so the back button and table colors always match -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Today's & Tomorrow's Programs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* back button like your programs/index design (glassy round) */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5); /* match homepage */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+      color: white;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: white;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
     .back-btn {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    font-size: 22px;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    background: rgba(255, 255, 255, 0.2);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex
-;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border: none;
-    outline: none;
-}
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: none;
+      outline: none;
+    }
     .back-btn:hover {
       transform: scale(1.1);
       background: rgba(255,255,255,0.3);
     }
-    
-
-    /* make sure tables show white text on the glass cards */
-    .styled-table th, .styled-table td {
-      color: white !important;
-      border: 1px solid rgba(255,255,255,0.18);
-      padding: 10px;
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      max-width: 600px;
     }
-    .styled-table th {
-      background: rgba(255,255,255,0.08);
+    .card {
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
-    .no-training {
-      color: #ffe4e6; /* soft light on bluish background */
-      background: rgba(255,255,255,0.06);
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 700;
+    .card h2 {
+      margin: 0 0 10px 0;
       text-align: center;
     }
-    .badge-highlight {
-      font-weight: 800;
-      color: #ffccd5;
-      background-color: rgba(255,255,255,0.06);
-      padding: 2px 8px;
-      border-radius: 6px;
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .center { text-align: center; }
+    .styled-table th, .styled-table td {
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 8px;
+      text-align: center;
+      color: white;
+    }
+    .styled-table th {
+      background: rgba(255,255,255,0.25);
+    }
+    .no-training {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 0, 0, 0.3);
+      border-radius: 8px;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Header -->
+  <header>
+    <h1>Programs</h1>
+  </header>
 
   <!-- Back button -->
   <button class="back-btn" onclick="goBack()" aria-label="Go back">
     <i class="fas fa-arrow-left"></i>
   </button>
 
-  <main class="page">
-    <section class="card card-today">
-      <h2 id="todayTitle">Today</h2>
-      <div id="todayContent"><div class="loading">Loading…</div></div>
-    </section>
+  <!-- Content -->
+  <div class="container">
+    <div class="card">
+      <h2>Today's Programs</h2>
+      <div id="todayPrograms">Loading...</div>
+    </div>
 
-    <section class="card card-tomorrow">
-      <h2 id="tomorrowTitle">Tomorrow</h2>
-      <div id="tomorrowContent"><div class="loading">Loading…</div></div>
-    </section>
-  </main>
+    <div class="card">
+      <h2>Tomorrow's Programs</h2>
+      <div id="tomorrowPrograms">Loading...</div>
+    </div>
+  </div>
 
-<script>
-/*
-  Robust gviz-based reader for your public sheet "Programs".
-  - Uses the spreadsheet id you gave.
-  - Matches dates after normalizing formats.
-  - Logs parsed rows to console for debugging.
-*/
-
-function goBack() {
+  <script>
+    function goBack() {
       window.location.href = "index.html";
-}
-
-const SHEET_ID = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co";
-const SHEET_NAME = "Programs";
-
-// Build gviz endpoint (JSONP style). Append timestamp to avoid caches.
-function gvizUrl() {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
-}
-
-// Convert a Date object -> { key: "DD-MMM-YY", label: "DD-MMM-YY [Weekday]" }
-function keyAndLabel(date) {
-  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const dd = String(d.getDate()).padStart(2,'0');
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const mon = months[d.getMonth()];
-  const yy = String(d.getFullYear()).slice(-2);
-  const weekday = d.toLocaleDateString('en-US', { weekday: 'long' });
-  return { key: `${dd}-${mon}-${yy}`, label: `${dd}-${mon}-${yy} [${weekday}]` };
-}
-
-// Normalize many date formats to "DD-MMM-YY" or return null
-function normalizeCellDate(cell) {
-  if (cell == null) return null;
-  const s = String(cell).trim();
-
-  // If already DD-MMM-YY or DD-MMM-YYYY
-  const m1 = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/);
-  if (m1) {
-    let dd = String(m1[1]).padStart(2,'0');
-    let mon = m1[2].slice(0,1).toUpperCase() + m1[2].slice(1).toLowerCase();
-    let yy = m1[3];
-    if (yy.length === 4) yy = yy.slice(-2);
-    return `${dd}-${mon}-${yy}`;
-  }
-
-  // ISO / JS parsable date like 2025-08-19 or "Aug 19 2025"
-  const iso = new Date(s);
-  if (!isNaN(iso.getTime())) {
-    const dd = String(iso.getDate()).padStart(2,'0');
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const mon = months[iso.getMonth()];
-    const yy = String(iso.getFullYear()).slice(-2);
-    return `${dd}-${mon}-${yy}`;
-  }
-
-  // Slash formats: DD/MM/YYYY or MM/DD/YYYY
-  const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-  if (m2) {
-    let a = parseInt(m2[1],10), b = parseInt(m2[2],10), y = parseInt(m2[3],10);
-    if (y < 100) y += 2000;
-    // guess: if a>12 -> DD/MM, else assume DD/MM
-    let D, M;
-    if (a > 12) { D = a; M = b - 1; }
-    else if (b > 12) { D = b; M = a - 1; }
-    else { D = a; M = b - 1; }
-    const d = new Date(y, M, D);
-    if (!isNaN(d.getTime())) {
-      const dd = String(d.getDate()).padStart(2,'0');
-      const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      const mon = months[d.getMonth()];
-      const yy = String(d.getFullYear()).slice(-2);
-      return `${dd}-${mon}-${yy}`;
     }
-  }
-  return null;
-}
 
-// highlight Opening/Closing
-function highlightDay(text) {
-  if (!text) return "";
-  if (/\[(Opening|Closing)\]/i.test(text)) return `<span class="badge-highlight">${text}</span>`;
-  return text;
-}
+    // Fetch data from Google Sheet
+    async function loadPrograms() {
+      const sheetId = "1zzK9dFYAlN3acpXfUG5-Xn9PNDxK_A5G9cuvpQRY5co";
+      const url = `https://opensheet.elk.sh/${sheetId}/Programs`;
 
-// Create HTML table or no-training message
-function buildTable(rows, noText) {
-  if (!rows || rows.length === 0) return `<div class="no-training">${noText}</div>`;
-  let html = `<table class="styled-table"><thead><tr>
-    <th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th>
-  </tr></thead><tbody>`;
-  rows.forEach((r,i)=>{
-    const dayCol = highlightDay(r[1] || "");
-    const nameCol = r[2] || "";
-    const venueCol = r[3] || "";
-    html += `<tr>
-      <td class="center">${i+1}</td>
-      <td>${dayCol}</td>
-      <td>${nameCol}</td>
-      <td>${venueCol}</td>
-    </tr>`;
-  });
-  html += `</tbody></table>`;
-  return html;
-}
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        const data = await response.json();
 
-// Main loader
-async function loadSheetAndRender() {
-  const { key: todayKey, label: todayLabel } = keyAndLabel(new Date());
-  const tomorrowDate = new Date(); tomorrowDate.setDate(tomorrowDate.getDate()+1);
-  const { key: tomorrowKey, label: tomorrowLabel } = keyAndLabel(tomorrowDate);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
 
-  document.getElementById('todayTitle').textContent = `Today: ${todayLabel}`;
-  document.getElementById('tomorrowTitle').textContent = `Tomorrow: ${tomorrowLabel}`;
+        const formatDate = d => {
+          const day = String(d.getDate()).padStart(2, "0");
+          const month = d.toLocaleString("en-US", { month: "short" });
+          const year = d.getFullYear().toString().slice(-2);
+          return `${day}-${month}-${year}`;
+        };
 
-  const url = gvizUrl();
-  console.log("Fetching sheet:", url);
+        const todayStr = formatDate(today);
+        const tomorrowStr = formatDate(tomorrow);
 
-  try {
-    const res = await fetch(url, { cache: "no-store" });
-    const txt = await res.text();
+        // Filter programs
+        const todayPrograms = data.filter(row => row.Date === todayStr);
+        const tomorrowPrograms = data.filter(row => row.Date === tomorrowStr);
 
-    // extract JSON payload from google's response: google.visualization.Query.setResponse({...});
-    const m = txt.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\);?/);
-    if (!m) throw new Error("Failed to parse sheet response");
-    const payload = JSON.parse(m[1]);
+        renderPrograms(todayPrograms, "todayPrograms", "No training today");
+        renderPrograms(tomorrowPrograms, "tomorrowPrograms", "No training tomorrow");
 
-    // rows: payload.table.rows -> each row has .c array of cell objects
-    const rawRows = (payload.table && payload.table.rows) ? payload.table.rows : [];
-    const parsed = rawRows.map(r => {
-      if (!r || !r.c) return [];
-      return r.c.map(cell => {
-        if (cell == null) return "";
-        // prefer formatted value (f) then v then empty
-        if (cell.f !== undefined && cell.f !== null) return String(cell.f);
-        if (cell.v !== undefined && cell.v !== null) return String(cell.v);
-        return "";
-      });
-    });
-
-    console.log("Parsed rows (first 30):", parsed.slice(0,30));
-
-    // Find header row (search first 6 rows for 'date' + 'venue' or 'training')
-    let headerIdx = 0;
-    for (let i=0;i<Math.min(6,parsed.length);i++) {
-      const lc = parsed[i].map(c => (c||'').toString().toLowerCase());
-      if (lc.includes('date') && (lc.includes('venue') || lc.some(x => x.includes('training') || x.includes('name')))) {
-        headerIdx = i;
-        break;
+      } catch (error) {
+        document.getElementById("todayPrograms").innerHTML = "<p class='no-training'>Error loading data</p>";
+        document.getElementById("tomorrowPrograms").innerHTML = "<p class='no-training'>Error loading data</p>";
       }
     }
 
-    const dataRows = parsed.slice(headerIdx+1).filter(r => r.some(c => (c||'').toString().trim() !== ""));
+    function renderPrograms(programs, containerId, emptyMsg) {
+      const container = document.getElementById(containerId);
+      if (programs.length === 0) {
+        container.innerHTML = `<p class="no-training">${emptyMsg}</p>`;
+        return;
+      }
+      let table = `<table class="styled-table">
+        <tr><th>Date</th><th>Day</th><th>Training</th><th>Venue</th></tr>`;
+      programs.forEach(row => {
+        table += `<tr>
+          <td>${row.Date}</td>
+          <td>${row.Day}</td>
+          <td>${row["Name of the Training"]}</td>
+          <td>${row.Venue}</td>
+        </tr>`;
+      });
+      table += `</table>`;
+      container.innerHTML = table;
+    }
 
-    // Normalize the date column then filter for today & tomorrow
-    const normalized = dataRows.map(r => {
-      const normDate = normalizeCellDate(r[0]);
-      return [ normDate, r[1] || "", r[2] || "", r[3] || "" ];
-    });
-
-    console.log("Normalized rows (first 30):", normalized.slice(0,30));
-
-    const todaysRows = normalized.filter(r => r[0] === todayKey);
-    const tomRows = normalized.filter(r => r[0] === tomorrowKey);
-
-    document.getElementById('todayContent').innerHTML = buildTable(todaysRows, "No training today");
-    document.getElementById('tomorrowContent').innerHTML = buildTable(tomRows, "No training tomorrow");
-
-  } catch (err) {
-    console.error("Load error:", err);
-    document.getElementById('todayContent').innerHTML = `<div class="no-training">Error loading data</div>`;
-    document.getElementById('tomorrowContent').innerHTML = `<div class="no-training">Error loading data</div>`;
-  }
-}
-
-// initial load + refresh every 60s
-document.addEventListener('DOMContentLoaded', () => {
-  loadSheetAndRender();
-  setInterval(loadSheetAndRender, 60_000);
-});
-</script>
+    loadPrograms();
+  </script>
 </body>
 </html>
