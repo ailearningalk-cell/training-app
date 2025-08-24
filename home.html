@@ -1,1 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Critical CSS - Loads first */
+        .bubbles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            opacity: 0.7;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            animation: rise 20s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0) scale(1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateX(20px) scale(1.05);
+                opacity: 0.5;
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-20px) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* Initial bubbles - pre-rendered */
+        .bubble:nth-child(1) {
+            width: 35px; height: 35px; left: 10%; 
+            animation-duration: 18s; animation-delay: 0.5s;
+        }
+        .bubble:nth-child(2) {
+            width: 25px; height: 25px; left: 25%; 
+            animation-duration: 20s; animation-delay: 1s;
+        }
+        .bubble:nth-child(3) {
+            width: 45px; height: 45px; left: 40%; 
+            animation-duration: 22s; animation-delay: 1.5s;
+        }
+        .bubble:nth-child(4) {
+            width: 30px; height: 30px; left: 55%; 
+            animation-duration: 19s; animation-delay: 0.8s;
+        }
+        .bubble:nth-child(5) {
+            width: 50px; height: 50px; left: 70%; 
+            animation-duration: 24s; animation-delay: 2s;
+        }
+        .bubble:nth-child(6) {
+            width: 20px; height: 20px; left: 85%; 
+            animation-duration: 17s; animation-delay: 0.3s;
+        }
+        .bubble:nth-child(7) {
+            width: 40px; height: 40px; left: 30%; 
+            animation-duration: 21s; animation-delay: 1.2s;
+        }
+        .bubble:nth-child(8) {
+            width: 28px; height: 28px; left: 60%; 
+            animation-duration: 16s; animation-delay: 0.7s;
+        }
+
+        /* Page content - loaded after bubbles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #3acfd5, #3a4ed5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            z-index: 1;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 350px;
+            z-index: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            gap: 15px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .card:hover,
+        .card:focus {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Bubble background - placed at the very top for immediate rendering -->
+    <div class="bubbles" id="bubblesContainer">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <h1>Training App</h1>
+    </header>
+
+    <!-- Main menu -->
+    <div class="container" id="mainMenu">
+        <a class="card" href="dashboard.html">
+            <i class="fas fa-chart-line"></i> Training Dashboard
+        </a>
+        <a class="card" href="programs.html">
+            <i class="fas fa-calendar"></i> Training Programs
+        </a>
+
+        <a class="card" href="todays.html">
+            <i class="fas fa-bolt"></i> Today's Programs
+        </a>
+
+        <div class="card" onclick="openQuickLinks()">
+            <i class="fas fa-link"></i> Quick Links
+        </div>
+    </div>
+
+    <script>
+        function openQuickLinks() {
+            alert("Quick Links feature will open here.");
+        }
+        
+        // Add more bubbles after page loads without interrupting initial ones
+        document.addEventListener('DOMContentLoaded', function() {
+            const bubblesContainer = document.getElementById('bubblesContainer');
+            const screenWidth = window.innerWidth;
+            
+            // Function to create additional bubbles
+            function createBubbles(count) {
+                for (let i = 0; i < count; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.classList.add('bubble');
+                    
+                    // Randomize bubble properties
+                    const size = Math.random() * 30 + 15; // 15px to 45px
+                    const left = Math.random() * (screenWidth - size);
+                    const duration = Math.random() * 10 + 15; // 15-25 seconds
+                    const delay = Math.random() * 3;
+                    
+                    // Even lighter bubbles
+                    const colorVariation = Math.random();
+                    if (colorVariation > 0.7) {
+                        bubble.style.background = 'rgba(255, 255, 255, 0.15)';
+                    } else if (colorVariation > 0.4) {
+                        bubble.style.background = 'rgba(240, 248, 255, 0.18)';
+                    } else {
+                        bubble.style.background = 'rgba(255, 255, 255, 0.12)';
+                    }
+                    
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.left = `${left}px`;
+                    bubble.style.animationDuration = `${duration}s`;
+                    bubble.style.animationDelay = `${delay}s`;
+                    
+                    bubblesContainer.appendChild(bubble);
+                    
+                    // Remove bubble when animation completes
+                    setTimeout(() => {
+                        if (bubble.parentNode) {
+                            bubble.parentNode.removeChild(bubble);
+                        }
+                    }, duration * 1000 + 1000);
+                }
+            }
+            
+            // Add more bubbles continuously
+            setInterval(() => {
+                createBubbles(2);
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>
