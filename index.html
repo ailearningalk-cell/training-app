@@ -1,246 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Training App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Critical CSS - Loads first */
-        .bubbles {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Training & Development, DPDC</title>
+  <style>
+    :root{
+      --bg:#0f172a;         /* slate-900 */
+      --fg:#e2e8f0;         /* slate-200 */
+      --brand:#60a5fa;      /* blue-400 */
+      --accent:#a78bfa;     /* violet-400 */
+    }
+    *{box-sizing:border-box; margin:0; padding:0}
+    html,body{height:100%;}
+    body{
+      margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      color:var(--fg); background:var(--bg);
+      display:grid; place-items:center; overflow:hidden;
+    }
 
-        .bubble {
-            position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            opacity: 0.7;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-            animation: rise 20s infinite ease-in;
-        }
+    /* ---------- Network Background ---------- */
+    .bg{
+      position:fixed; inset:0; pointer-events:none; overflow:hidden;
+      background: linear-gradient(135deg, #0b1220 0%, #0f172a 50%, #0b1220 100%);
+    }
+    
+    /* Canvas for animated connections */
+    #network-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-        @keyframes rise {
-            0% {
-                bottom: -100px;
-                transform: translateX(0) scale(1);
-                opacity: 0.7;
-            }
-            50% {
-                transform: translateX(20px) scale(1.05);
-                opacity: 0.5;
-            }
-            100% {
-                bottom: 1080px;
-                transform: translateX(-20px) scale(1.1);
-                opacity: 0;
-            }
-        }
+    /* ---------- Foreground Container ---------- */
+    .container { 
+      text-align: center; 
+      color: #fff; 
+      position: relative; 
+      z-index: 2;
+    }
 
-        /* Initial bubbles - pre-rendered */
-        .bubble:nth-child(1) {
-            width: 35px; height: 35px; left: 10%; 
-            animation-duration: 18s; animation-delay: 0.5s;
-        }
-        .bubble:nth-child(2) {
-            width: 25px; height: 25px; left: 25%; 
-            animation-duration: 20s; animation-delay: 1s;
-        }
-        .bubble:nth-child(3) {
-            width: 45px; height: 45px; left: 40%; 
-            animation-duration: 22s; animation-delay: 1.5s;
-        }
-        .bubble:nth-child(4) {
-            width: 30px; height: 30px; left: 55%; 
-            animation-duration: 19s; animation-delay: 0.8s;
-        }
-        .bubble:nth-child(5) {
-            width: 50px; height: 50px; left: 70%; 
-            animation-duration: 24s; animation-delay: 2s;
-        }
-        .bubble:nth-child(6) {
-            width: 20px; height: 20px; left: 85%; 
-            animation-duration: 17s; animation-delay: 0.3s;
-        }
-        .bubble:nth-child(7) {
-            width: 40px; height: 40px; left: 30%; 
-            animation-duration: 21s; animation-delay: 1.2s;
-        }
-        .bubble:nth-child(8) {
-            width: 28px; height: 28px; left: 60%; 
-            animation-duration: 16s; animation-delay: 0.7s;
-        }
+    .logo {
+      width: 120px; height: 120px; margin: 0 auto 20px;
+      border-radius: 50%; background: linear-gradient(135deg, var(--brand), var(--accent));
+      display: flex; justify-content: center; align-items: center; overflow: hidden;
+      box-shadow: 0 0 30px rgba(96,165,250,0.6);
+      animation: pop 1.2s ease forwards;
+    }
+    .logo img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
 
-        /* Page content - loaded after bubbles */
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(180deg, #3acfd5, #3a4ed5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 0.5s ease-in forwards;
-            animation-delay: 0.3s;
-        }
+    h1 { 
+      font-size: 24px; 
+      margin-bottom: 10px; 
+      opacity: 0; 
+      animation: fadeInUp 1s ease 0.8s forwards;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    p { 
+      font-size: 14px; 
+      opacity: 0; 
+      animation: fadeInUp 1s ease 1.4s forwards;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
+    .progress-bar { 
+      margin: 30px auto 0; 
+      width: 220px; 
+      height: 6px; 
+      background: rgba(255,255,255,0.25); 
+      border-radius: 999px; 
+      overflow: hidden; 
+    }
+    .progress { 
+      height: 100%; 
+      width: 0%; 
+      background: linear-gradient(90deg, var(--brand), var(--accent)); 
+      animation: load 4s ease forwards;
+    }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: white;
-            z-index: 1;
-        }
+    @keyframes pop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes load {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
 
-        h1 {
-            margin: 0;
-            font-size: 28px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-            max-width: 350px;
-            z-index: 1;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            gap: 15px;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s ease;
-            text-decoration: none;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-
-        .card:hover,
-        .card:focus {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.3);
-        }
-    </style>
+    /* Particles */
+    #fx{ position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.35 }
+  </style>
 </head>
-
 <body>
-    <!-- Bubble background - placed at the very top for immediate rendering -->
-    <div class="bubbles" id="bubblesContainer">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
+  <div class="bg" aria-hidden="true"></div>
+  <canvas id="network-canvas"></canvas>
+  <canvas id="fx" width="1920" height="1080" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <div class="logo">
+      <img src="https://ailearningalk-cell.github.io/training-app/icons/logo.png" alt="App Logo">
     </div>
+    <h1>Training & Development, DPDC</h1>
+    <p>Empowering Learning, Inspiring Growth</p>
+    <div class="progress-bar"><div class="progress"></div></div>
+  </div>
 
-    <!-- Header -->
-    <header>
-        <h1>Training App</h1>
-    </header>
+  <script>
+    // Redirect after 4 seconds to home.html
+    setTimeout(() => {
+      window.location.replace("home.html");
+    }, 4000);
 
-    <!-- Main menu -->
-    <div class="container" id="mainMenu">
-        <a class="card" href="dashboard.html">
-            <i class="fas fa-chart-line"></i> Training Dashboard
-        </a>
-        <a class="card" href="programs.html">
-            <i class="fas fa-calendar"></i> Training Programs
-        </a>
+    // Lightweight particles - continuous animation
+    const cv = document.getElementById('fx');
+    const ctx = cv.getContext('2d');
+    const pr = Math.min(2, window.devicePixelRatio || 1);
+    let W,H,parts=[];
+    function resize(){
+      W=cv.width=Math.floor(innerWidth*pr);
+      H=cv.height=Math.floor(innerHeight*pr);
+      parts=Array.from({length:40},()=>({
+        x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2*pr,
+        vx:(-.2+Math.random()*.4)*pr,vy:(-.2+Math.random()*.4)*pr
+      }));
+    }
+    function step(){
+      ctx.clearRect(0,0,W,H);
+      ctx.globalAlpha=0.8;ctx.lineWidth=1*pr;
+      parts.forEach(pt=>{
+        pt.x+=pt.vx; pt.y+=pt.vy;
+        if(pt.x<0||pt.x>W)pt.vx*=-1;
+        if(pt.y<0||pt.y>H)pt.vy*=-1;
+        ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);
+        ctx.strokeStyle='rgba(96,165,250,.45)'; ctx.stroke();
+      });
+      requestAnimationFrame(step);
+    }
+    addEventListener('resize',resize,{passive:true}); resize(); step();
 
-        <a class="card" href="todays.html">
-            <i class="fas fa-bolt"></i> Today's Programs
-        </a>
-
-        <div class="card" onclick="openQuickLinks()">
-            <i class="fas fa-link"></i> Quick Links
-        </div>
-    </div>
-
-    <script>
-        function openQuickLinks() {
-            alert("Quick Links feature will open here.");
-        }
-        
-        // Add more bubbles after page loads without interrupting initial ones
-        document.addEventListener('DOMContentLoaded', function() {
-            const bubblesContainer = document.getElementById('bubblesContainer');
-            const screenWidth = window.innerWidth;
-            
-            // Function to create additional bubbles
-            function createBubbles(count) {
-                for (let i = 0; i < count; i++) {
-                    const bubble = document.createElement('div');
-                    bubble.classList.add('bubble');
-                    
-                    // Randomize bubble properties
-                    const size = Math.random() * 30 + 15; // 15px to 45px
-                    const left = Math.random() * (screenWidth - size);
-                    const duration = Math.random() * 10 + 15; // 15-25 seconds
-                    const delay = Math.random() * 3;
-                    
-                    // Even lighter bubbles
-                    const colorVariation = Math.random();
-                    if (colorVariation > 0.7) {
-                        bubble.style.background = 'rgba(255, 255, 255, 0.15)';
-                    } else if (colorVariation > 0.4) {
-                        bubble.style.background = 'rgba(240, 248, 255, 0.18)';
-                    } else {
-                        bubble.style.background = 'rgba(255, 255, 255, 0.12)';
-                    }
-                    
-                    bubble.style.width = `${size}px`;
-                    bubble.style.height = `${size}px`;
-                    bubble.style.left = `${left}px`;
-                    bubble.style.animationDuration = `${duration}s`;
-                    bubble.style.animationDelay = `${delay}s`;
-                    
-                    bubblesContainer.appendChild(bubble);
-                    
-                    // Remove bubble when animation completes
-                    setTimeout(() => {
-                        if (bubble.parentNode) {
-                            bubble.parentNode.removeChild(bubble);
-                        }
-                    }, duration * 1000 + 1000);
-                }
-            }
-            
-            // Add more bubbles continuously
-            setInterval(() => {
-                createBubbles(2);
-            }, 3000);
+    // Network background animation - continuous animation
+    const networkCanvas = document.getElementById('network-canvas');
+    const networkCtx = networkCanvas.getContext('2d');
+    let nodes = [];
+    
+    function setupNetwork() {
+      networkCanvas.width = window.innerWidth;
+      networkCanvas.height = window.innerHeight;
+      
+      // Create nodes
+      nodes = [];
+      const nodeCount = 25;
+      for (let i = 0; i < nodeCount; i++) {
+        nodes.push({
+          x: Math.random() * networkCanvas.width,
+          y: Math.random() * networkCanvas.height,
+          radius: Math.random() * 2 + 1,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4
         });
-    </script>
+      }
+      
+      animateNetwork();
+    }
+    
+    function animateNetwork() {
+      networkCtx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+      
+      // Update and draw nodes
+      nodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        
+        // Bounce off walls
+        if (node.x < 0 || node.x > networkCanvas.width) node.vx *= -1;
+        if (node.y < 0 || node.y > networkCanvas.height) node.vy *= -1;
+        
+        // Draw node
+        networkCtx.beginPath();
+        networkCtx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        networkCtx.fillStyle = `rgba(96, 165, 250, ${0.4 + Math.random() * 0.3})`;
+        networkCtx.fill();
+      });
+      
+      // Draw connections
+      nodes.forEach((node, i) => {
+        nodes.forEach((otherNode, j) => {
+          if (i !== j) {
+            const dx = node.x - otherNode.x;
+            const dy = node.y - otherNode.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 150) {
+              const opacity = 1 - dist / 150;
+              networkCtx.beginPath();
+              networkCtx.moveTo(node.x, node.y);
+              networkCtx.lineTo(otherNode.x, otherNode.y);
+              networkCtx.strokeStyle = `rgba(96, 165, 250, ${opacity * 0.15})`;
+              networkCtx.lineWidth = 0.5;
+              networkCtx.stroke();
+            }
+          }
+        });
+      });
+      
+      requestAnimationFrame(animateNetwork);
+    }
+    
+    window.addEventListener('resize', () => {
+      setupNetwork();
+    });
+    
+    setupNetwork();
+  </script>
 </body>
-
 </html>
