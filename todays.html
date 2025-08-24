@@ -22,12 +22,12 @@
     header {
       text-align: center;
       margin-bottom: 30px;
-      color: white;
     }
-    h1 {
+    header h1 {
       margin: 0;
       font-size: 28px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      color: black; /* Programs title black */
     }
     .back-btn {
       position: absolute;
@@ -63,12 +63,19 @@
       background: rgba(255,255,255,0.2);
       border-radius: 20px;
       padding: 20px;
-      color: white;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
+    /* Headers inside cards */
     .card h2 {
       margin: 0 0 10px 0;
       text-align: center;
+      font-size: 20px;
+    }
+    #todayHeader {
+      color: black; /* Today header black */
+    }
+    #tomorrowHeader {
+      color: rgba(0,0,0,0.75); /* Tomorrow header = lighter black like table text */
     }
     .styled-table {
       width: 100%;
@@ -78,10 +85,13 @@
       border: 1px solid rgba(255,255,255,0.3);
       padding: 8px;
       text-align: center;
-      color: white;
+      color: rgba(0,0,0,0.75); /* table data lighter black */
     }
     .styled-table th {
       background: rgba(255,255,255,0.25);
+    }
+    .styled-table td:nth-child(3) {
+      text-align: left; /* Name of Training left aligned */
     }
     .no-training {
       text-align: center;
