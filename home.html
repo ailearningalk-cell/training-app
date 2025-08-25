@@ -241,6 +241,47 @@
             }, 3000);
         });
     </script>
+<script>
+  // If your page needs internet for fetch(), you can ask native to check at start:
+  (function checkNow() {
+    try {
+      if (window.AndroidBridge && !AndroidBridge.isOnline()) {
+        AndroidBridge.showNoInternet();
+      }
+    } catch(e) {}
+  })();
+
+  // Also react when the network drops later
+  window.addEventListener('offline', () => {
+    if (window.AndroidBridge) {
+      AndroidBridge.showNoInternet();
+    } else {
+      alert('No internet available');
+    }
+  });
+</script>
+<script>
+  // If your page needs internet for fetch(), you can ask native to check at start:
+  (function checkNow() {
+    try {
+      if (window.AndroidBridge && !AndroidBridge.isOnline()) {
+        AndroidBridge.showNoInternet();
+      }
+    } catch(e) {}
+  })();
+
+  // Also react when the network drops later
+  window.addEventListener('offline', () => {
+    if (window.AndroidBridge) {
+      AndroidBridge.showNoInternet();
+    } else {
+      alert('No internet available');
+    }
+  });
+</script>
+
+
+    
 </body>
 
 </html>
