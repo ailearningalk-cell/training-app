@@ -19,24 +19,18 @@
       display:grid; place-items:center; overflow:hidden;
     }
 
-    /* ---------- Network Background ---------- */
+    /* ---------- Background ---------- */
     .bg{
       position:fixed; inset:0; pointer-events:none; overflow:hidden;
       background: linear-gradient(135deg, #0b1220 0%, #0f172a 50%, #0b1220 100%);
     }
-    
-    /* Canvas for animated connections */
-    #network-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
+    #network-canvas, #fx {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
     }
+    #fx{ opacity:.35 }
 
-    /* ---------- Foreground Container ---------- */
+    /* ---------- Foreground ---------- */
     .container { 
       text-align: center; 
       color: #fff; 
@@ -44,36 +38,47 @@
       z-index: 2;
     }
 
+    /* No background, no border on container */
     .logo {
-      width: 120px; height: 120px; margin: 0 auto 20px;
-      display: flex; justify-content: center; align-items: center; overflow: hidden;
-      box-shadow: 0 0 25px rgba(96,165,250,0.45);   /* faint glow */
-      border-radius: 50%;  /* keeps the glow circular */
+      width: 140px; 
+      margin: 0 auto 20px;
       animation: pop 1.2s ease forwards;
     }
+    /* Make the image itself circular + glow */
     .logo img {
-      width: 100%; height: 100%; object-fit: contain;
+      width: 100%; height: auto; display:block;
+      border-radius: 50%;             /* keeps the logo perfectly round */
+      background: transparent;        /* ensures no square fill behind */
+      /* soft animated glow applied to the image — not the container */
+      animation: glowPulse 4s ease-in-out infinite alternate;
+    }
+
+    /* Animated glow around the circular logo */
+    @keyframes glowPulse {
+      0%   { filter: drop-shadow(0 0 10px rgba(96,165,250,.55)) drop-shadow(0 0 18px rgba(96,165,250,.40)); }
+      50%  { filter: drop-shadow(0 0 14px rgba(167,139,250,.60)) drop-shadow(0 0 24px rgba(167,139,250,.45)); }
+      100% { filter: drop-shadow(0 0 10px rgba(96,165,250,.55)) drop-shadow(0 0 18px rgba(96,165,250,.40)); }
     }
 
     h1 { 
       font-size: 24px; 
       margin-bottom: 10px; 
       opacity: 0; 
-      animation: fadeInUp 1s ease 0.8s forwards;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      animation: fadeInUp 1s ease .8s forwards;
+      text-shadow: 0 2px 10px rgba(0,0,0,.5);
     }
     p { 
       font-size: 14px; 
       opacity: 0; 
       animation: fadeInUp 1s ease 1.4s forwards;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 2px 10px rgba(0,0,0,.5);
     }
 
     .progress-bar { 
       margin: 30px auto 0; 
       width: 220px; 
       height: 6px; 
-      background: rgba(255,255,255,0.25); 
+      background: rgba(255,255,255,.25); 
       border-radius: 999px; 
       overflow: hidden; 
     }
@@ -84,21 +89,22 @@
       animation: load 4s ease forwards;
     }
 
+    /* Basic motions */
     @keyframes pop {
-      0% { transform: scale(0.5); opacity: 0; }
+      0% { transform: scale(.5); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
     @keyframes fadeInUp {
       from { transform: translateY(20px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-    @keyframes load {
-      0% { width: 0%; }
-      100% { width: 100%; }
-    }
+    @keyframes load { 0% { width: 0% } 100% { width: 100% } }
 
-    /* Particles */
-    #fx{ position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.35 }
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .logo img{ animation:none }
+      .progress{ animation:none; width:100% }
+    }
   </style>
 </head>
 <body>
@@ -108,7 +114,8 @@
 
   <div class="container">
     <div class="logo">
-      <img src="https://ailearningalk-cell.github.io/training-app/icons/logo.png" alt="App Logo">
+      <!-- Use your transparent PNG here -->
+      <img src="https://ailearningalk-cell.github.io/training-app/icons/logo.png" alt="DPDC Training Logo">
     </div>
     <h1>Training & Development, DPDC</h1>
     <p>Empowering Learning, Inspiring Growth</p>
@@ -117,11 +124,9 @@
 
   <script>
     // Redirect after 4 seconds to home.html
-    setTimeout(() => {
-      window.location.replace("home.html");
-    }, 4000);
+    setTimeout(() => { window.location.replace("home.html"); }, 4000);
 
-    // Lightweight particles - continuous animation
+    // --------- Lightweight particles (continuous) ----------
     const cv = document.getElementById('fx');
     const ctx = cv.getContext('2d');
     const pr = Math.min(2, window.devicePixelRatio || 1);
@@ -148,16 +153,13 @@
     }
     addEventListener('resize',resize,{passive:true}); resize(); step();
 
-    // Network background animation - continuous animation
+    // --------- Subtle network background (continuous) ----------
     const networkCanvas = document.getElementById('network-canvas');
     const networkCtx = networkCanvas.getContext('2d');
     let nodes = [];
-    
     function setupNetwork() {
       networkCanvas.width = window.innerWidth;
       networkCanvas.height = window.innerHeight;
-      
-      // Create nodes
       nodes = [];
       const nodeCount = 25;
       for (let i = 0; i < nodeCount; i++) {
@@ -169,35 +171,27 @@
           vy: (Math.random() - 0.5) * 0.4
         });
       }
-      
       animateNetwork();
     }
-    
     function animateNetwork() {
       networkCtx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
-      
-      // Update and draw nodes
       nodes.forEach(node => {
         node.x += node.vx;
         node.y += node.vy;
-        
         if (node.x < 0 || node.x > networkCanvas.width) node.vx *= -1;
         if (node.y < 0 || node.y > networkCanvas.height) node.vy *= -1;
-        
+
         networkCtx.beginPath();
         networkCtx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
         networkCtx.fillStyle = `rgba(96, 165, 250, ${0.4 + Math.random() * 0.3})`;
         networkCtx.fill();
       });
-      
-      // Draw connections
       nodes.forEach((node, i) => {
         nodes.forEach((otherNode, j) => {
           if (i !== j) {
             const dx = node.x - otherNode.x;
             const dy = node.y - otherNode.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
+            const dist = Math.hypot(dx, dy);
             if (dist < 150) {
               const opacity = 1 - dist / 150;
               networkCtx.beginPath();
@@ -210,14 +204,9 @@
           }
         });
       });
-      
       requestAnimationFrame(animateNetwork);
     }
-    
-    window.addEventListener('resize', () => {
-      setupNetwork();
-    });
-    
+    window.addEventListener('resize', setupNetwork, { passive:true });
     setupNetwork();
   </script>
 </body>
