@@ -5,209 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training & Development, DPDC</title>
   <style>
-    :root{
-      --bg:#0f172a;         /* slate-900 */
-      --fg:#e2e8f0;         /* slate-200 */
-      --brand:#60a5fa;      /* blue-400 */
-      --accent:#a78bfa;     /* violet-400 */
+    :root {
+      --bg1: #1e3c72;   /* Deep blue */
+      --bg2: #2a5298;   /* Lighter blue gradient */
+      --fg: #f1f5f9;
+      --brand: #60a5fa;
+      --accent: #a78bfa;
+      --glow: rgba(96, 165, 250, 0.45);
     }
-    *{box-sizing:border-box; margin:0; padding:0}
-    html,body{height:100%;}
-    body{
-      margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
-      color:var(--fg); background:var(--bg);
-      display:grid; place-items:center; overflow:hidden;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif;
+      color: var(--fg);
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      display: grid; place-items: center;
+      overflow: hidden;
     }
 
-    /* ---------- Background ---------- */
-    .bg{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden;
-      background: linear-gradient(135deg, #0b1220 0%, #0f172a 50%, #0b1220 100%);
+    /* Particle canvas */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
     }
-    #network-canvas, #fx {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
-    }
-    #fx{ opacity:.35 }
 
-    /* ---------- Foreground ---------- */
-    .container { 
-      text-align: center; 
-      color: #fff; 
-      position: relative; 
+    .container {
+      text-align: center;
+      position: relative;
       z-index: 2;
     }
 
-    /* No background, no border on container */
+    /* Circular logo */
     .logo {
-      width: 140px; 
+      width: 120px; height: 120px;
       margin: 0 auto 20px;
-      animation: pop 1.2s ease forwards;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 30px var(--glow);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.5s ease, transform 1s ease;
     }
-    /* Make the image itself circular + glow */
     .logo img {
-      width: 100%; height: auto; display:block;
-      border-radius: 50%;             /* keeps the logo perfectly round */
-      background: transparent;        /* ensures no square fill behind */
-      /* soft animated glow applied to the image — not the container */
-      animation: glowPulse 4s ease-in-out infinite alternate;
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
     }
+    .logo.show { opacity: 1; transform: scale(1); }
 
-    /* Animated glow around the circular logo */
-    @keyframes glowPulse {
-      0%   { filter: drop-shadow(0 0 10px rgba(96,165,250,.55)) drop-shadow(0 0 18px rgba(96,165,250,.40)); }
-      50%  { filter: drop-shadow(0 0 14px rgba(167,139,250,.60)) drop-shadow(0 0 24px rgba(167,139,250,.45)); }
-      100% { filter: drop-shadow(0 0 10px rgba(96,165,250,.55)) drop-shadow(0 0 18px rgba(96,165,250,.40)); }
+    h1 {
+      font-size: 22px; margin-bottom: 10px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 1s ease 0.8s, transform 1s ease 0.8s;
     }
+    h1.show { opacity: 1; transform: translateY(0); }
 
-    h1 { 
-      font-size: 24px; 
-      margin-bottom: 10px; 
-      opacity: 0; 
-      animation: fadeInUp 1s ease .8s forwards;
-      text-shadow: 0 2px 10px rgba(0,0,0,.5);
+    p {
+      font-size: 14px;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 1s ease 1.4s, transform 1s ease 1.4s;
     }
-    p { 
-      font-size: 14px; 
-      opacity: 0; 
-      animation: fadeInUp 1s ease 1.4s forwards;
-      text-shadow: 0 2px 10px rgba(0,0,0,.5);
-    }
+    p.show { opacity: 1; transform: translateY(0); }
 
-    .progress-bar { 
-      margin: 30px auto 0; 
-      width: 220px; 
-      height: 6px; 
-      background: rgba(255,255,255,.25); 
-      border-radius: 999px; 
-      overflow: hidden; 
+    /* Progress bar */
+    .progress-bar {
+      margin: 30px auto 0;
+      width: 220px; height: 6px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 999px;
+      overflow: hidden;
     }
-    .progress { 
-      height: 100%; 
-      width: 0%; 
-      background: linear-gradient(90deg, var(--brand), var(--accent)); 
-      animation: load 4s ease forwards;
-    }
-
-    /* Basic motions */
-    @keyframes pop {
-      0% { transform: scale(.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes fadeInUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes load { 0% { width: 0% } 100% { width: 100% } }
-
-    /* Respect reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .logo img{ animation:none }
-      .progress{ animation:none; width:100% }
+    .progress {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      transition: width 4s ease;
     }
   </style>
 </head>
 <body>
-  <div class="bg" aria-hidden="true"></div>
-  <canvas id="network-canvas"></canvas>
-  <canvas id="fx" width="1920" height="1080" aria-hidden="true"></canvas>
+  <canvas id="particles"></canvas>
 
   <div class="container">
-    <div class="logo">
-      <!-- Use your transparent PNG here -->
-      <img src="https://ailearningalk-cell.github.io/training-app/icons/logo.png" alt="DPDC Training Logo">
+    <div class="logo" id="logo">
+      <img src="https://ailearningalk-cell.github.io/training-app/icons/logo.png" alt="App Logo" id="logo-img">
     </div>
-    <h1>Training & Development, DPDC</h1>
-    <p>Empowering Learning, Inspiring Growth</p>
-    <div class="progress-bar"><div class="progress"></div></div>
+    <h1 id="title">Training & Development, DPDC</h1>
+    <p id="subtitle">Empowering Learning, Inspiring Growth</p>
+    <div class="progress-bar"><div class="progress" id="progress"></div></div>
   </div>
 
   <script>
-    // Redirect after 4 seconds to home.html
-    setTimeout(() => { window.location.replace("home.html"); }, 4000);
-
-    // --------- Lightweight particles (continuous) ----------
-    const cv = document.getElementById('fx');
-    const ctx = cv.getContext('2d');
-    const pr = Math.min(2, window.devicePixelRatio || 1);
-    let W,H,parts=[];
-    function resize(){
-      W=cv.width=Math.floor(innerWidth*pr);
-      H=cv.height=Math.floor(innerHeight*pr);
-      parts=Array.from({length:40},()=>({
-        x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2*pr,
-        vx:(-.2+Math.random()*.4)*pr,vy:(-.2+Math.random()*.4)*pr
-      }));
+    // Particle network background
+    const canvas = document.getElementById("particles");
+    const ctx = canvas.getContext("2d");
+    let w, h;
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
     }
-    function step(){
-      ctx.clearRect(0,0,W,H);
-      ctx.globalAlpha=0.8;ctx.lineWidth=1*pr;
-      parts.forEach(pt=>{
-        pt.x+=pt.vx; pt.y+=pt.vy;
-        if(pt.x<0||pt.x>W)pt.vx*=-1;
-        if(pt.y<0||pt.y>H)pt.vy*=-1;
-        ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.r,0,Math.PI*2);
-        ctx.strokeStyle='rgba(96,165,250,.45)'; ctx.stroke();
-      });
-      requestAnimationFrame(step);
-    }
-    addEventListener('resize',resize,{passive:true}); resize(); step();
+    window.addEventListener("resize", resize);
+    resize();
 
-    // --------- Subtle network background (continuous) ----------
-    const networkCanvas = document.getElementById('network-canvas');
-    const networkCtx = networkCanvas.getContext('2d');
-    let nodes = [];
-    function setupNetwork() {
-      networkCanvas.width = window.innerWidth;
-      networkCanvas.height = window.innerHeight;
-      nodes = [];
-      const nodeCount = 25;
-      for (let i = 0; i < nodeCount; i++) {
-        nodes.push({
-          x: Math.random() * networkCanvas.width,
-          y: Math.random() * networkCanvas.height,
-          radius: Math.random() * 2 + 1,
-          vx: (Math.random() - 0.5) * 0.4,
-          vy: (Math.random() - 0.5) * 0.4
-        });
+    const particles = Array.from({length: 60}, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6
+    }));
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.strokeStyle = "rgba(255,255,255,0.2)";
+      ctx.lineWidth = 1;
+
+      for (let p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fill();
       }
-      animateNetwork();
-    }
-    function animateNetwork() {
-      networkCtx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
-      nodes.forEach(node => {
-        node.x += node.vx;
-        node.y += node.vy;
-        if (node.x < 0 || node.x > networkCanvas.width) node.vx *= -1;
-        if (node.y < 0 || node.y > networkCanvas.height) node.vy *= -1;
 
-        networkCtx.beginPath();
-        networkCtx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-        networkCtx.fillStyle = `rgba(96, 165, 250, ${0.4 + Math.random() * 0.3})`;
-        networkCtx.fill();
-      });
-      nodes.forEach((node, i) => {
-        nodes.forEach((otherNode, j) => {
-          if (i !== j) {
-            const dx = node.x - otherNode.x;
-            const dy = node.y - otherNode.y;
-            const dist = Math.hypot(dx, dy);
-            if (dist < 150) {
-              const opacity = 1 - dist / 150;
-              networkCtx.beginPath();
-              networkCtx.moveTo(node.x, node.y);
-              networkCtx.lineTo(otherNode.x, otherNode.y);
-              networkCtx.strokeStyle = `rgba(96, 165, 250, ${opacity * 0.15})`;
-              networkCtx.lineWidth = 0.5;
-              networkCtx.stroke();
-            }
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          let dx = particles[i].x - particles[j].x;
+          let dy = particles[i].y - particles[j].y;
+          let dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
           }
-        });
-      });
-      requestAnimationFrame(animateNetwork);
+        }
+      }
+      requestAnimationFrame(animateParticles);
     }
-    window.addEventListener('resize', setupNetwork, { passive:true });
-    setupNetwork();
+    animateParticles();
+
+    // Logo preload + reveal
+    const logo = document.getElementById("logo");
+    const logoImg = document.getElementById("logo-img");
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+    const progress = document.getElementById("progress");
+
+    logoImg.onload = () => {
+      logo.classList.add("show");
+      title.classList.add("show");
+      subtitle.classList.add("show");
+      requestAnimationFrame(() => { progress.style.width = "100%"; });
+    };
+
+    setTimeout(() => {
+      window.location.replace("home.html");
+    }, 4000);
   </script>
 </body>
 </html>
