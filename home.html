@@ -264,23 +264,22 @@
 
     <!-- Internet check using AndroidBridge -->
     <script>
-        function showNoInternet() {
-            if (window.AndroidBridge) {
-                AndroidBridge.showNoInternet();
-            } else {
-                alert('Internet not available. Exit.');
-            }
+    function showNoInternet() {
+        if(window.AndroidBridge) {
+            AndroidBridge.showInternetUnavailable(); // Calls MainActivity
+        } else {
+            alert('Internet not available. Exit app.');
         }
+    }
 
-        // Check at start
-        if (window.AndroidBridge && !AndroidBridge.isOnline()) {
-            showNoInternet();
-        }
+    if(window.AndroidBridge && !AndroidBridge.isOnline()) {
+        showNoInternet();
+    }
 
-        // Listen for offline events dynamically
-        window.addEventListener('offline', () => {
-            showNoInternet();
-        });
-    </script>
+    window.addEventListener('offline', () => {
+        showNoInternet();
+    });
+</script>
+
 </body>
 </html>
