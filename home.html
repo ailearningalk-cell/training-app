@@ -34,10 +34,12 @@
                 transform: translateX(0) scale(1);
                 opacity: 0.7;
             }
+
             50% {
                 transform: translateX(20px) scale(1.05);
                 opacity: 0.5;
             }
+
             100% {
                 bottom: 1080px;
                 transform: translateX(-20px) scale(1.1);
@@ -47,36 +49,67 @@
 
         /* Initial bubbles - pre-rendered */
         .bubble:nth-child(1) {
-            width: 35px; height: 35px; left: 10%; 
-            animation-duration: 18s; animation-delay: 0.5s;
+            width: 35px;
+            height: 35px;
+            left: 10%;
+            animation-duration: 18s;
+            animation-delay: 0.5s;
         }
+
         .bubble:nth-child(2) {
-            width: 25px; height: 25px; left: 25%; 
-            animation-duration: 20s; animation-delay: 1s;
+            width: 25px;
+            height: 25px;
+            left: 25%;
+            animation-duration: 20s;
+            animation-delay: 1s;
         }
+
         .bubble:nth-child(3) {
-            width: 45px; height: 45px; left: 40%; 
-            animation-duration: 22s; animation-delay: 1.5s;
+            width: 45px;
+            height: 45px;
+            left: 40%;
+            animation-duration: 22s;
+            animation-delay: 1.5s;
         }
+
         .bubble:nth-child(4) {
-            width: 30px; height: 30px; left: 55%; 
-            animation-duration: 19s; animation-delay: 0.8s;
+            width: 30px;
+            height: 30px;
+            left: 55%;
+            animation-duration: 19s;
+            animation-delay: 0.8s;
         }
+
         .bubble:nth-child(5) {
-            width: 50px; height: 50px; left: 70%; 
-            animation-duration: 24s; animation-delay: 2s;
+            width: 50px;
+            height: 50px;
+            left: 70%;
+            animation-duration: 24s;
+            animation-delay: 2s;
         }
+
         .bubble:nth-child(6) {
-            width: 20px; height: 20px; left: 85%; 
-            animation-duration: 17s; animation-delay: 0.3s;
+            width: 20px;
+            height: 20px;
+            left: 85%;
+            animation-duration: 17s;
+            animation-delay: 0.3s;
         }
+
         .bubble:nth-child(7) {
-            width: 40px; height: 40px; left: 30%; 
-            animation-duration: 21s; animation-delay: 1.2s;
+            width: 40px;
+            height: 40px;
+            left: 30%;
+            animation-duration: 21s;
+            animation-delay: 1.2s;
         }
+
         .bubble:nth-child(8) {
-            width: 28px; height: 28px; left: 60%; 
-            animation-duration: 16s; animation-delay: 0.7s;
+            width: 28px;
+            height: 28px;
+            left: 60%;
+            animation-duration: 16s;
+            animation-delay: 0.7s;
         }
 
         /* Page content - loaded after bubbles */
@@ -99,7 +132,9 @@
         }
 
         @keyframes fadeIn {
-            to { opacity: 1; }
+            to {
+                opacity: 1;
+            }
         }
 
         header {
@@ -151,7 +186,7 @@
 </head>
 
 <body>
-    <!-- Bubble background - placed at the very top for immediate rendering -->
+    <!-- Bubble background -->
     <div class="bubbles" id="bubblesContainer">
         <div class="bubble"></div>
         <div class="bubble"></div>
@@ -176,11 +211,9 @@
         <a class="card" href="programs.html">
             <i class="fas fa-calendar"></i> Training Programs
         </a>
-
         <a class="card" href="todays.html">
             <i class="fas fa-bolt"></i> Today's Programs
         </a>
-
         <div class="card" onclick="openQuickLinks()">
             <i class="fas fa-link"></i> Quick Links
         </div>
@@ -190,98 +223,64 @@
         function openQuickLinks() {
             alert("Quick Links feature will open here.");
         }
-        
-        // Add more bubbles after page loads without interrupting initial ones
-        document.addEventListener('DOMContentLoaded', function() {
+
+        // Bubbles animation
+        document.addEventListener('DOMContentLoaded', function () {
             const bubblesContainer = document.getElementById('bubblesContainer');
             const screenWidth = window.innerWidth;
-            
-            // Function to create additional bubbles
+
             function createBubbles(count) {
                 for (let i = 0; i < count; i++) {
                     const bubble = document.createElement('div');
                     bubble.classList.add('bubble');
-                    
-                    // Randomize bubble properties
-                    const size = Math.random() * 30 + 15; // 15px to 45px
+                    const size = Math.random() * 30 + 15;
                     const left = Math.random() * (screenWidth - size);
-                    const duration = Math.random() * 10 + 15; // 15-25 seconds
+                    const duration = Math.random() * 10 + 15;
                     const delay = Math.random() * 3;
-                    
-                    // Even lighter bubbles
+
                     const colorVariation = Math.random();
-                    if (colorVariation > 0.7) {
-                        bubble.style.background = 'rgba(255, 255, 255, 0.15)';
-                    } else if (colorVariation > 0.4) {
-                        bubble.style.background = 'rgba(240, 248, 255, 0.18)';
-                    } else {
-                        bubble.style.background = 'rgba(255, 255, 255, 0.12)';
-                    }
-                    
+                    bubble.style.background =
+                        colorVariation > 0.7 ? 'rgba(255, 255, 255, 0.15)' :
+                            colorVariation > 0.4 ? 'rgba(240, 248, 255, 0.18)' :
+                                'rgba(255, 255, 255, 0.12)';
+
                     bubble.style.width = `${size}px`;
                     bubble.style.height = `${size}px`;
                     bubble.style.left = `${left}px`;
                     bubble.style.animationDuration = `${duration}s`;
                     bubble.style.animationDelay = `${delay}s`;
-                    
+
                     bubblesContainer.appendChild(bubble);
-                    
-                    // Remove bubble when animation completes
+
                     setTimeout(() => {
-                        if (bubble.parentNode) {
-                            bubble.parentNode.removeChild(bubble);
-                        }
+                        if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
                     }, duration * 1000 + 1000);
                 }
             }
-            
-            // Add more bubbles continuously
-            setInterval(() => {
-                createBubbles(2);
-            }, 3000);
+
+            setInterval(() => createBubbles(2), 3000);
         });
     </script>
-<script>
-  // If your page needs internet for fetch(), you can ask native to check at start:
-  (function checkNow() {
-    try {
-      if (window.AndroidBridge && !AndroidBridge.isOnline()) {
-        AndroidBridge.showNoInternet();
-      }
-    } catch(e) {}
-  })();
 
-  // Also react when the network drops later
-  window.addEventListener('offline', () => {
-    if (window.AndroidBridge) {
-      AndroidBridge.showNoInternet();
-    } else {
-      alert('No internet available');
-    }
-  });
-</script>
-<script>
-  // If your page needs internet for fetch(), you can ask native to check at start:
-  (function checkNow() {
-    try {
-      if (window.AndroidBridge && !AndroidBridge.isOnline()) {
-        AndroidBridge.showNoInternet();
-      }
-    } catch(e) {}
-  })();
+    <!-- Internet check using AndroidBridge -->
+    <script>
+        function showNoInternet() {
+            if (window.AndroidBridge) {
+                AndroidBridge.showNoInternet();
+            } else {
+                alert('Internet not available. Exit.');
+            }
+        }
 
-  // Also react when the network drops later
-  window.addEventListener('offline', () => {
-    if (window.AndroidBridge) {
-      AndroidBridge.showNoInternet();
-    } else {
-      alert('No internet available');
-    }
-  });
-</script>
+        // Check at start
+        if (window.AndroidBridge && !AndroidBridge.isOnline()) {
+            showNoInternet();
+        }
 
-
-    
+        // Listen for offline events dynamically
+        window.addEventListener('offline', () => {
+            showNoInternet();
+        });
+    </script>
 </body>
-
 </html>
