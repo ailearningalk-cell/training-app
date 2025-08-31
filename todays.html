@@ -141,17 +141,9 @@
       return `${day} ${month} ${year} [${weekday}]`;
     }
 
-    // Format sheet date with leading zero for day: "01-Sep-25"
+    // Format sheet date: "20-Aug-25"
     function formatSheetDate(dateObj) {
       const day = String(dateObj.getDate()).padStart(2, "0");
-      const month = dateObj.toLocaleString("en-US", { month: "short" });
-      const year = dateObj.getFullYear().toString().slice(-2);
-      return `${day}-${month}-${year}`;
-    }
-
-    // Alternative format: "1-Sep-25" (without leading zero)
-    function formatSheetDateAlt(dateObj) {
-      const day = dateObj.getDate();
       const month = dateObj.toLocaleString("en-US", { month: "short" });
       const year = dateObj.getFullYear().toString().slice(-2);
       return `${day}-${month}-${year}`;
@@ -169,35 +161,21 @@
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
 
-        // Create multiple possible date formats to match Google Sheets
         const todayStr = formatSheetDate(today);
-        const todayStrAlt = formatSheetDateAlt(today);
         const tomorrowStr = formatSheetDate(tomorrow);
-        const tomorrowStrAlt = formatSheetDateAlt(tomorrow);
 
         // Set headers
         document.getElementById("todayHeader").innerText = `Today: ${formatHeaderDate(today)}`;
         document.getElementById("tomorrowHeader").innerText = `Tomorrow: ${formatHeaderDate(tomorrow)}`;
 
-        // Filter programs - check for both date formats
-        const todayPrograms = data.filter(row => 
-          row.Date === todayStr || row.Date === todayStrAlt
-        );
-        const tomorrowPrograms = data.filter(row => 
-          row.Date === tomorrowStr || row.Date === tomorrowStrAlt
-        );
-
-        // Debug: Log what we're looking for and what we found
-        console.log("Looking for today's date formats:", todayStr, "or", todayStrAlt);
-        console.log("Found today's programs:", todayPrograms);
-        console.log("Looking for tomorrow's date formats:", tomorrowStr, "or", tomorrowStrAlt);
-        console.log("Found tomorrow's programs:", tomorrowPrograms);
+        // Filter programs
+        const todayPrograms = data.filter(row => row.Date === todayStr);
+        const tomorrowPrograms = data.filter(row => row.Date === tomorrowStr);
 
         renderPrograms(todayPrograms, "todayPrograms", "No training today");
         renderPrograms(tomorrowPrograms, "tomorrowPrograms", "No training tomorrow");
 
       } catch (error) {
-        console.error("Error loading data:", error);
         document.getElementById("todayPrograms").innerHTML = "<p class='no-training'>Error loading data</p>";
         document.getElementById("tomorrowPrograms").innerHTML = "<p class='no-training'>Error loading data</p>";
       }
