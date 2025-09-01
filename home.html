@@ -7,38 +7,277 @@
     <title>DPDC Training App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* Keep all your previous styles intact */
-        .bubbles { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; overflow: hidden; }
-        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; opacity: 0.7; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); animation: rise 20s infinite ease-in; }
-        @keyframes rise { 0% { bottom: -100px; transform: translateX(0) scale(1); opacity: 0.7; } 50% { transform: translateX(20px) scale(1.05); opacity: 0.5; } 100% { bottom: 1080px; transform: translateX(-20px) scale(1.1); opacity: 0; } }
-        .bubble:nth-child(1) { width: 35px; height: 35px; left: 10%; animation-duration: 18s; animation-delay: 0.5s; }
-        .bubble:nth-child(2) { width: 25px; height: 25px; left: 25%; animation-duration: 20s; animation-delay: 1s; }
-        .bubble:nth-child(3) { width: 45px; height: 45px; left: 40%; animation-duration: 22s; animation-delay: 1.5s; }
-        .bubble:nth-child(4) { width: 30px; height: 30px; left: 55%; animation-duration: 19s; animation-delay: 0.8s; }
-        .bubble:nth-child(5) { width: 50px; height: 50px; left: 70%; animation-duration: 24s; animation-delay: 2s; }
-        .bubble:nth-child(6) { width: 20px; height: 20px; left: 85%; animation-duration: 17s; animation-delay: 0.3s; }
-        .bubble:nth-child(7) { width: 40px; height: 40px; left: 30%; animation-duration: 21s; animation-delay: 1.2s; }
-        .bubble:nth-child(8) { width: 28px; height: 28px; left: 60%; animation-duration: 16s; animation-delay: 0.7s; }
-        body { margin: 0; font-family: Arial, sans-serif; background: linear-gradient(180deg, #3acfd5, #3a4ed5); display: flex; justify-content: center; align-items: center; min-height: 100vh; flex-direction: column; padding: 20px; box-sizing: border-box; position: relative; overflow: hidden; opacity: 0; animation: fadeIn 0.5s ease-in forwards; animation-delay: 0.3s; }
-        @keyframes fadeIn { to { opacity: 1; } }
-        header { text-align: center; margin-bottom: 30px; color: white; z-index: 1; }
-        h1 { margin: 0; font-size: 28px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 350px; z-index: 1; }
-        .card { background: rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 20px; color: white; display: flex; align-items: center; justify-content: center; font-size: 18px; gap: 15px; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); transition: all 0.2s ease; text-decoration: none; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
-        .card:hover, .card:focus { transform: scale(1.05); background: rgba(255, 255, 255, 0.3); }
+        /* Stunning Background Styles */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, 
+                #0f0c29 0%, 
+                #302b63 25%, 
+                #24243e 50%, 
+                #1a1a2e 75%, 
+                #16213e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Animated Gradient Background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                #0f0c29, #302b63, #24243e, #1a1a2e, #16213e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -3;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 20px rgba(100, 150, 255, 0.3),
+                0 0 40px rgba(100, 150, 255, 0.2),
+                0 0 60px rgba(100, 150, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            25% { 
+                transform: translateY(-20px) rotate(90deg);
+                opacity: 0.9;
+            }
+            50% { 
+                transform: translateY(-40px) rotate(180deg);
+                opacity: 0.6;
+            }
+            75% { 
+                transform: translateY(-20px) rotate(270deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* Glowing Orbs */
+        .orbs {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(100, 150, 255, 0.4) 0%,
+                rgba(100, 150, 255, 0.2) 40%,
+                rgba(100, 150, 255, 0.1) 70%,
+                transparent 100%);
+            filter: blur(40px);
+            animation: orbPulse 8s infinite ease-in-out;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+            z-index: 1;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 
+                0 0 20px rgba(100, 150, 255, 0.8),
+                0 0 40px rgba(100, 150, 255, 0.6),
+                0 0 60px rgba(100, 150, 255, 0.4);
+            background: linear-gradient(45deg, #ffffff, #a8d8ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        /* Container Styles */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            max-width: 400px;
+            z-index: 1;
+            animation: slideUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 1.1rem;
+            gap: 20px;
+            cursor: pointer;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(100, 150, 255, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover, .card:focus {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 30px rgba(100, 150, 255, 0.3);
+        }
+
+        .card i {
+            font-size: 1.5rem;
+            color: #a8d8ff;
+            text-shadow: 0 0 10px rgba(168, 216, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover i {
+            transform: scale(1.2);
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+                font-size: 1rem;
+            }
+            
+            .card i {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="bubbles" id="bubblesContainer">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
+    <!-- Background Elements -->
+    <div class="gradient-bg"></div>
+    
+    <div class="particles" id="particles"></div>
+    
+    <div class="orbs" id="orbs">
+        <div class="orb" style="width: 300px; height: 300px; top: 20%; left: 10%;"></div>
+        <div class="orb" style="width: 200px; height: 200px; top: 60%; left: 80%;"></div>
+        <div class="orb" style="width: 250px; height: 250px; top: 70%; left: 20%;"></div>
     </div>
 
     <header>
@@ -47,72 +286,82 @@
 
     <div class="container" id="mainMenu">
         <a class="card" href="dashboard.html">
-            <i class="fas fa-chart-line"></i> Training Dashboard
+            <i class="fas fa-chart-line"></i>
+            <span>Training Dashboard</span>
         </a>
         <a class="card" href="programs.html">
-            <i class="fas fa-calendar"></i> Training Programs
+            <i class="fas fa-calendar"></i>
+            <span>Training Programs</span>
         </a>
         <a class="card" href="todays.html">
-            <i class="fas fa-bolt"></i> Today's Programs
+            <i class="fas fa-bolt"></i>
+            <span>Today's Programs</span>
         </a>
         <div class="card" onclick="openQuickLinks()">
-            <i class="fas fa-link"></i> Quick Links
+            <i class="fas fa-link"></i>
+            <span>Quick Links</span>
         </div>
     </div>
 
     <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 15 + 5;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const duration = Math.random() * 10 + 15;
+                const delay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                // Random color variations
+                const colorChoice = Math.random();
+                if (colorChoice > 0.7) {
+                    particle.style.background = 'rgba(168, 216, 255, 0.15)';
+                } else if (colorChoice > 0.4) {
+                    particle.style.background = 'rgba(255, 200, 100, 0.1)';
+                } else {
+                    particle.style.background = 'rgba(255, 255, 255, 0.08)';
+                }
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
         function openQuickLinks() {
             alert("Quick Links feature will open here.");
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const bubblesContainer = document.getElementById('bubblesContainer');
-            const screenWidth = window.innerWidth;
-
-            function createBubbles(count) {
-                for (let i = 0; i < count; i++) {
-                    const bubble = document.createElement('div');
-                    bubble.classList.add('bubble');
-                    const size = Math.random() * 30 + 15;
-                    const left = Math.random() * (screenWidth - size);
-                    const duration = Math.random() * 10 + 15;
-                    const delay = Math.random() * 3;
-                    const colorVariation = Math.random();
-                    if (colorVariation > 0.7) bubble.style.background = 'rgba(255, 255, 255, 0.15)';
-                    else if (colorVariation > 0.4) bubble.style.background = 'rgba(240, 248, 255, 0.18)';
-                    else bubble.style.background = 'rgba(255, 255, 255, 0.12)';
-                    bubble.style.width = `${size}px`;
-                    bubble.style.height = `${size}px`;
-                    bubble.style.left = `${left}px`;
-                    bubble.style.animationDuration = `${duration}s`;
-                    bubble.style.animationDelay = `${delay}s`;
-                    bubblesContainer.appendChild(bubble);
-                    setTimeout(() => {
-                        if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
-                    }, duration * 1000 + 1000);
-                }
+            createParticles();
+            
+            // Check internet via AndroidBridge
+            function checkInternet() {
+                try {
+                    if (window.AndroidBridge && !AndroidBridge.isOnline()) {
+                        AndroidBridge.showNoInternet();
+                    }
+                } catch (e) {}
             }
 
-            setInterval(() => { createBubbles(2); }, 3000);
-        });
-    </script>
+            window.addEventListener('offline', () => {
+                checkInternet();
+            });
 
-    <script>
-        // Check internet via AndroidBridge
-        function checkInternet() {
-            try {
-                if (window.AndroidBridge && !AndroidBridge.isOnline()) {
-                    AndroidBridge.showNoInternet();
-                }
-            } catch (e) {}
-        }
-
-        window.addEventListener('offline', () => {
             checkInternet();
         });
-
-        document.addEventListener('DOMContentLoaded', checkInternet);
     </script>
 </body>
-
 </html>
