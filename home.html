@@ -74,16 +74,7 @@
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 0.4s ease-in forwards;
-            animation-delay: 0.8s;
-            /* Reduced delay */
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
+            opacity: 1; /* Remove fade-in for body */
         }
 
         header {
@@ -91,21 +82,8 @@
             margin-bottom: 25px;
             color: white;
             z-index: 1;
-            opacity: 0;
-            animation: slideDown 0.6s ease-out forwards;
-            animation-delay: 0.9s;
-            /* Reduced delay */
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            opacity: 1; /* Remove fade-in for header */
+            transform: translateY(0); /* Start in final position */
         }
 
         h1 {
@@ -121,21 +99,8 @@
             width: 100%;
             max-width: 350px;
             z-index: 1;
-            opacity: 0;
-            animation: slideUp 0.6s ease-out forwards;
-            animation-delay: 1.0s;
-            /* Reduced delay */
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            opacity: 1; /* Remove fade-in for container */
+            transform: translateY(0); /* Start in final position */
         }
 
         .card {
@@ -154,11 +119,27 @@
             text-decoration: none;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
+            opacity: 0; /* Start cards invisible */
+            transform: translateY(20px); /* Start cards slightly down */
+            animation: cardAppear 0.8s ease-out forwards;
+        }
+
+        /* Stagger card animations */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card:hover,
         .card:focus {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(0);
             background: rgba(255, 255, 255, 0.3);
         }
     </style>
@@ -196,10 +177,10 @@
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
 
-            // Create initial bubble explosion from center - INCREASED BUBBLE COUNT
+            // Create initial bubble explosion from center
             function createBubbleExplosion() {
-                const bubbleCount = 60; // Increased from 30 to 60
-                const explosionRadius = 400; // Increased explosion radius
+                const bubbleCount = 60;
+                const explosionRadius = 400;
 
                 for (let i = 0; i < bubbleCount; i++) {
                     const bubble = document.createElement('div');
@@ -218,11 +199,11 @@
                     bubble.style.setProperty('--translate-y', `${translateY}px`);
 
                     // Random bubble properties
-                    const size = Math.random() * 35 + 10; // More size variation
-                    const duration = 1.2 + Math.random() * 0.8; // Faster explosion
-                    const delay = Math.random() * 0.3; // Reduced delay
+                    const size = Math.random() * 35 + 10;
+                    const duration = 1.2 + Math.random() * 0.8;
+                    const delay = Math.random() * 0.3;
 
-                    // Random bubble color variations with more colors
+                    // Random bubble color variations
                     const colorVariation = Math.random();
                     if (colorVariation > 0.8) {
                         bubble.style.background = 'rgba(255, 255, 255, 0.3)';
@@ -256,7 +237,7 @@
                 }
             }
 
-            // Create continuous bubbles after initial explosion - INCREASED FREQUENCY
+            // Create continuous bubbles
             function createContinuousBubbles() {
                 const screenWidth = window.innerWidth;
 
@@ -266,10 +247,9 @@
 
                     const size = Math.random() * 35 + 10;
                     const left = Math.random() * (screenWidth - size);
-                    const duration = 10 + Math.random() * 8; // Faster rising
-                    const delay = Math.random() * 2; // Reduced delay
+                    const duration = 10 + Math.random() * 8;
+                    const delay = Math.random() * 2;
 
-                    // More color variations for continuous bubbles
                     const colorVariation = Math.random();
                     if (colorVariation > 0.8) {
                         bubble.style.background = 'rgba(255, 255, 255, 0.2)';
@@ -295,20 +275,18 @@
                     }, (duration + delay) * 1000);
                 }
 
-                // Create more initial continuous bubbles
-                for (let i = 0; i < 15; i++) { // Increased from 8 to 15
+                // Create initial continuous bubbles
+                for (let i = 0; i < 15; i++) {
                     createBubble();
                 }
 
                 // Create bubbles more frequently
-                setInterval(createBubble, 1500); // Reduced from 3000ms to 1500ms
+                setInterval(createBubble, 1500);
             }
 
-            // Start with the center explosion
+            // Start both animations immediately
             createBubbleExplosion();
-
-            // Start continuous bubbles sooner
-            setTimeout(createContinuousBubbles, 1800); // Reduced from 2500ms to 1800ms
+            createContinuousBubbles();
         });
     </script>
 
