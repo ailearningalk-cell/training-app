@@ -77,23 +77,24 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      min-width: 500px;
+      min-width: 350px;
     }
     .styled-table th, .styled-table td {
       border: 1px solid rgba(255,255,255,0.3);
       padding: 8px;
       text-align: center;
       color: rgba(0,0,0,0.85);
-      white-space: nowrap;
     }
     .styled-table th {
       background: rgba(255,255,255,0.25);
       font-weight: bold;
+      white-space: nowrap;
     }
     .styled-table td:nth-child(3) {
       text-align: left;
       white-space: normal;
       word-break: break-word;
+      max-width: 200px; /* allow wrap into 2 lines */
     }
     .details-icon {
       width: 22px;
@@ -107,6 +108,7 @@
       border-radius: 8px;
       color: #fff;
     }
+
     /* Popup modal */
     .modal {
       display: none;
@@ -118,6 +120,7 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
+      box-sizing: border-box;
     }
     .modal-content {
       background: white;
@@ -125,17 +128,23 @@
       border: 2px solid #3a4ed5;
       border-radius: 12px;
       padding: 20px;
-      max-width: 500px;
-      width: 100%;
+      max-width: 90%;
+      width: 400px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
       animation: fadeIn 0.3s ease;
+      overflow-wrap: break-word;
     }
     .modal-content h3 {
-      margin-top: 0;
+      margin: 0;
       text-align: center;
     }
+    .modal-content .modal-date {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
     .modal-content p {
-      margin: 10px 0;
+      margin: 8px 0;
       white-space: pre-line;
     }
     .close-btn {
@@ -152,6 +161,15 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
+    }
+
+    @media(max-width: 500px) {
+      .styled-table td:nth-child(3) {
+        max-width: 120px; /* wrap earlier on mobile */
+      }
+      .modal-content {
+        width: 90%;
+      }
     }
   </style>
 </head>
@@ -181,6 +199,7 @@
   <div id="programModal" class="modal">
     <div class="modal-content">
       <h3>Program Details</h3>
+      <div class="modal-date" id="modalDate"></div>
       <div id="modalBody"></div>
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
@@ -258,7 +277,8 @@
           training: row["Name of the Training"],
           trainers: trainersList,
           venue: row.Venue,
-          remarks: row.Remarks || ""
+          remarks: row.Remarks || "",
+          dateStr: formatHeaderDate(new Date(row.Date.replace(/-/g, '/'))) // for popup
         };
 
         table += `<tr>
@@ -274,6 +294,7 @@
     }
 
     function showDetails(program) {
+      document.getElementById("modalDate").innerText = program.dateStr;
       document.getElementById("modalBody").innerHTML = `
         <p><b>Name of the Training:</b>\n${program.training}</p>
         <p><b>Resource Persons:</b>\n${program.trainers || "-"}</p>
