@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Training Programs – Jul 25</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Inter, sans-serif;
+      background: linear-gradient(180deg, #3acfd5, #3a4ed5); /* gradient */
+      color: white;
+      min-height: 100vh;
+    }
 
+    .wrap {
+      max-width: 1200px;
+      margin: 60px auto 30px;
+      padding: 0 16px;
+    }
+
+    .title {
+      font-size: 1.6em;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.15); /* light transparent effect */
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      color: black; /* Changed from white to black */
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.4); /* white-ish borders */
+      color: black; /* Ensure both th and td have black text */
+    }
+
+    th {
+      background: rgba(255,255,255,0.2);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    td.center {
+      text-align: center;
+    }
+
+    /* Back button style */
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      background: rgba(255,255,255,0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border: none;
+      outline: none;
+    }
+    .back-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- Back button -->
+  <button class="back-btn" onclick="goBack()" aria-label="Go back">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <div class="wrap">
+    <div class="title">Training Programs in Jul-25</div>
+    <div class="card">
+      <table id="grid">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // === CONFIG: your sheet ===
+    const SHEET_ID = "1jOq4rQC2m6MCw4wyAyaIIY5CNESMO4HwkJ49h6WD-VY";
+    const GID = "458904660";
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}&tqx=out:json`;
+
+    async function loadSheet() {
+      try {
+        const r = await fetch(GVIZ_URL);
+        const text = await r.text();
+        const json = JSON.parse(text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1));
+        const table = json.table;
+
+        const columns = table.cols.map(c => c.label || c.id || "");
+        const rows = table.rows
+          .map(r => (r.c || []).map(cell => cell ? (cell.f ?? cell.v ?? "") : ""))
+          .filter(r => r.some(v => v !== ""));
+
+        render(columns, rows);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function render(columns, rows) {
+      const thead = document.getElementById("thead");
+      const tbody = document.getElementById("tbody");
+
+      // Render header row
+      thead.innerHTML = "";
+      const tr = document.createElement("tr");
+      columns.forEach(col => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        tr.appendChild(th);
+      });
+      thead.appendChild(tr);
+
+      // Render body rows
+      tbody.innerHTML = "";
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach((val, i) => {
+          const td = document.createElement("td");
+          td.textContent = val;
+
+          const colName = columns[i].toLowerCase();
+          if (["sl. no", "no of participants", "duration", "remarks"].some(name => colName.includes(name))) {
+            td.classList.add("center");
+          }
+
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function goBack() {
+      window.location.href = "../programs.html";
+    }
+
+    loadSheet();
+  </script>
+</body>
+</html>
