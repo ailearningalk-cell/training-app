@@ -77,11 +77,10 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      min-width: 350px;
     }
     .styled-table th, .styled-table td {
       border: 1px solid rgba(255,255,255,0.3);
-      padding: 8px;
+      padding: 6px;
       text-align: center;
       color: rgba(0,0,0,0.85);
     }
@@ -95,6 +94,9 @@
       white-space: normal;
       word-break: break-word;
       max-width: 200px; /* allow wrap into 2 lines */
+    }
+    .styled-table td:nth-child(4) {
+      width: 50px;
     }
     .details-icon {
       width: 22px;
@@ -163,12 +165,20 @@
       to { opacity: 1; transform: scale(1); }
     }
 
+    /* Mobile responsiveness */
     @media(max-width: 500px) {
+      .styled-table {
+        font-size: 12px;
+      }
       .styled-table td:nth-child(3) {
         max-width: 120px; /* wrap earlier on mobile */
       }
+      .styled-table td:nth-child(4) {
+        width: 40px;
+      }
       .modal-content {
-        width: 90%;
+        width: 95%;
+        padding: 15px;
       }
     }
   </style>
@@ -198,7 +208,7 @@
   <!-- Popup modal -->
   <div id="programModal" class="modal">
     <div class="modal-content">
-      <h3>Training Details</h3>
+      <h3>Program Details</h3>
       <div class="modal-date" id="modalDate"></div>
       <div id="modalBody"></div>
       <button class="close-btn" onclick="closeModal()">Close</button>
@@ -278,7 +288,7 @@
           trainers: trainersList,
           venue: row.Venue,
           remarks: row.Remarks || "",
-          dateStr: formatHeaderDate(new Date(row.Date.replace(/-/g, '/'))) // for popup
+          dateStr: formatHeaderDate(new Date(row.Date.replace(/-/g, '/')))
         };
 
         table += `<tr>
