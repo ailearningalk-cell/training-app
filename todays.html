@@ -188,14 +188,14 @@
         return;
       }
       let table = `<table class="styled-table">
-        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th><th>Remarks</th></tr>`;
+        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th><th>Trainers</th></tr>`;
       programs.forEach((row, index) => {
         table += `<tr>
           <td>${index + 1}</td>
           <td>${row.Day}</td>
           <td>${row["Name of the Training"]}</td>
           <td>${row.Venue}</td>
-          <td>${row.Remarks}</td>
+          <td>${row.Trainers}</td>
         </tr>`;
       });
       table += `</table>`;
