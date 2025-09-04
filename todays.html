@@ -77,7 +77,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      min-width: 600px;
+      min-width: 500px;
     }
     .styled-table th, .styled-table td {
       border: 1px solid rgba(255,255,255,0.3);
@@ -95,16 +95,10 @@
       white-space: normal;
       word-break: break-word;
     }
-    .styled-table td:nth-child(4),
-    .styled-table td:nth-child(5),
-    .styled-table td:nth-child(6) {
-      text-align: left;
-    }
-    .styled-table tr {
+    .details-icon {
+      width: 22px;
+      height: 22px;
       cursor: pointer;
-    }
-    .styled-table tr:hover {
-      background: rgba(255,255,255,0.15);
     }
     .no-training {
       text-align: center;
@@ -128,6 +122,7 @@
     .modal-content {
       background: white;
       color: black;
+      border: 2px solid #3a4ed5;
       border-radius: 12px;
       padding: 20px;
       max-width: 500px;
@@ -140,7 +135,8 @@
       text-align: center;
     }
     .modal-content p {
-      margin: 8px 0;
+      margin: 10px 0;
+      white-space: pre-line;
     }
     .close-btn {
       background: #3a4ed5;
@@ -247,7 +243,7 @@
         return;
       }
       let table = `<table class="styled-table">
-        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Trainers</th><th>Venue</th><th>Remarks</th></tr>`;
+        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Details</th></tr>`;
       
       programs.forEach((row, index) => {
         let trainersList = "";
@@ -255,23 +251,22 @@
           trainersList = "-";
         } else if (row.Trainers) {
           const lines = row.Trainers.split(/\n/).map(l => l.trim()).filter(l => l.length > 0 && l !== "-");
-          trainersList = lines.map((line, i) => `${i + 1}- ${line}`).join("<br>");
+          trainersList = lines.map((line, i) => `${i + 1} - ${line}`).join("\n");
         }
 
-        table += `<tr onclick='showDetails(${JSON.stringify({
-          sl: index + 1,
-          day: row.Day,
+        let programData = {
           training: row["Name of the Training"],
           trainers: trainersList,
           venue: row.Venue,
           remarks: row.Remarks || ""
-        })})'>
+        };
+
+        table += `<tr>
           <td>${index + 1}</td>
           <td>${row.Day}</td>
           <td>${row["Name of the Training"]}</td>
-          <td>${trainersList}</td>
-          <td>${row.Venue}</td>
-          <td>${row.Remarks || ""}</td>
+          <td><img src="https://ailearningalk-cell.github.io/training-app/icons/details.png" 
+                   alt="Details" class="details-icon" onclick='showDetails(${JSON.stringify(programData)})'></td>
         </tr>`;
       });
       table += `</table>`;
@@ -280,10 +275,8 @@
 
     function showDetails(program) {
       document.getElementById("modalBody").innerHTML = `
-        <p><b>Sl. No:</b> ${program.sl}</p>
-        <p><b>Day:</b> ${program.day}</p>
-        <p><b>Name of the Training:</b> ${program.training}</p>
-        <p><b>Trainers:</b> ${program.trainers || "-"}</p>
+        <p><b>Name of the Training:</b>\n${program.training}</p>
+        <p><b>Resource Persons:</b>\n${program.trainers || "-"}</p>
         <p><b>Venue:</b> ${program.venue}</p>
         <p><b>Remarks:</b> ${program.remarks}</p>
       `;
