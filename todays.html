@@ -64,7 +64,7 @@
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      overflow-x: auto; /* make responsive with horizontal scroll */
+      overflow-x: auto;
     }
     .card h2 {
       margin: 0 0 10px 0;
@@ -81,24 +81,28 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
-      min-width: 600px; /* ensures table doesn't shrink too much */
+      min-width: 600px;
     }
     .styled-table th, .styled-table td {
       border: 1px solid rgba(255,255,255,0.3);
       padding: 8px;
       text-align: center;
       color: rgba(0,0,0,0.85);
-      white-space: nowrap; /* keep all in one line */
+      white-space: nowrap;
     }
     .styled-table th {
       background: rgba(255,255,255,0.25);
       font-weight: bold;
     }
-    /* Specific column alignment */
-    .styled-table td:nth-child(3) { text-align: left; }  /* Training name */
-    .styled-table td:nth-child(4) { text-align: left; }  /* Trainers */
-    .styled-table td:nth-child(5) { text-align: left; }  /* Venue */
-    .styled-table td:nth-child(6) { text-align: left; }  /* Remarks */
+    /* Column-specific rules */
+    .styled-table td:nth-child(3) {
+      text-align: left;
+      white-space: normal; /* allow wrapping in Training Name column */
+      word-break: break-word;
+    }
+    .styled-table td:nth-child(4) { text-align: left; } /* Trainers */
+    .styled-table td:nth-child(5) { text-align: left; } /* Venue */
+    .styled-table td:nth-child(6) { text-align: left; } /* Remarks */
     .no-training {
       text-align: center;
       padding: 15px;
