@@ -27,7 +27,7 @@
       margin: 0;
       font-size: 28px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      color: black; /* Programs title black */
+      color: black;
     }
     .back-btn {
       position: absolute;
@@ -57,46 +57,48 @@
       flex-direction: column;
       gap: 20px;
       width: 100%;
-      max-width: 600px;
+      max-width: 1000px;
     }
     .card {
       background: rgba(255,255,255,0.2);
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      overflow-x: auto; /* make responsive with horizontal scroll */
     }
-    /* Headers inside cards */
     .card h2 {
       margin: 0 0 10px 0;
       text-align: center;
       font-size: 20px;
     }
     #todayHeader {
-      color: black; /* Today header black */
+      color: black;
     }
     #tomorrowHeader {
-      color: rgba(0,0,0,0.75); /* Tomorrow header = lighter black like table text */
+      color: rgba(0,0,0,0.75);
     }
     .styled-table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 14px;
+      min-width: 600px; /* ensures table doesn't shrink too much */
     }
     .styled-table th, .styled-table td {
       border: 1px solid rgba(255,255,255,0.3);
       padding: 8px;
       text-align: center;
-      color: rgba(0,0,0,0.75); /* table data lighter black */
+      color: rgba(0,0,0,0.85);
+      white-space: nowrap; /* keep all in one line */
     }
     .styled-table th {
       background: rgba(255,255,255,0.25);
+      font-weight: bold;
     }
-    .styled-table td:nth-child(3) {
-      text-align: left; /* Name of Training left aligned */
-    }
-    .styled-table td:nth-child(5) {
-      text-align: left; /* Trainer left aligned */
-      font-size: 12px;
-    }
+    /* Specific column alignment */
+    .styled-table td:nth-child(3) { text-align: left; }  /* Training name */
+    .styled-table td:nth-child(4) { text-align: left; }  /* Trainers */
+    .styled-table td:nth-child(5) { text-align: left; }  /* Venue */
+    .styled-table td:nth-child(6) { text-align: left; }  /* Remarks */
     .no-training {
       text-align: center;
       padding: 15px;
@@ -108,17 +110,14 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header>
     <h1>Programs</h1>
   </header>
 
-  <!-- Back button -->
   <button class="back-btn" onclick="goBack()" aria-label="Go back">
     <i class="fas fa-arrow-left"></i>
   </button>
 
-  <!-- Content -->
   <div class="container">
     <div class="card">
       <h2 id="todayHeader">Today</h2>
@@ -136,7 +135,6 @@
       window.location.href = "home.html";
     }
 
-    // Format header date: "20 Aug 25 [Wed]"
     function formatHeaderDate(dateObj) {
       const day = String(dateObj.getDate()).padStart(2, "0");
       const month = dateObj.toLocaleString("en-US", { month: "short" });
@@ -145,7 +143,6 @@
       return `${day} ${month} ${year} [${weekday}]`;
     }
 
-    // Format sheet date: "20-Aug-25"
     function formatSheetDate(dateObj) {
       const day = String(dateObj.getDate()).padStart(2, "0");
       const month = dateObj.toLocaleString("en-US", { month: "short" });
@@ -168,11 +165,9 @@
         const todayStr = formatSheetDate(today);
         const tomorrowStr = formatSheetDate(tomorrow);
 
-        // Set headers
         document.getElementById("todayHeader").innerText = `Today: ${formatHeaderDate(today)}`;
         document.getElementById("tomorrowHeader").innerText = `Tomorrow: ${formatHeaderDate(tomorrow)}`;
 
-        // Filter programs
         const todayPrograms = data.filter(row => row.Date === todayStr);
         const tomorrowPrograms = data.filter(row => row.Date === tomorrowStr);
 
@@ -192,20 +187,24 @@
         return;
       }
       let table = `<table class="styled-table">
-        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Venue</th><th>Trainers</th></tr>`;
+        <tr><th>Sl. No</th><th>Day</th><th>Name of the Training</th><th>Trainers</th><th>Venue</th><th>Remarks</th></tr>`;
+      
       programs.forEach((row, index) => {
-        // split trainers by newline, add numbering
         let trainersList = "";
-        if (row.Trainers) {
-          const lines = row.Trainers.split(/\n/);
+        if (row.Trainers && row.Trainers.trim() === "-") {
+          trainersList = "-";
+        } else if (row.Trainers) {
+          const lines = row.Trainers.split(/\n/).map(l => l.trim()).filter(l => l.length > 0 && l !== "-");
           trainersList = lines.map((line, i) => `${i + 1}- ${line}`).join("<br>");
         }
+
         table += `<tr>
           <td>${index + 1}</td>
           <td>${row.Day}</td>
           <td>${row["Name of the Training"]}</td>
-          <td>${row.Venue}</td>
           <td>${trainersList}</td>
+          <td>${row.Venue}</td>
+          <td>${row.Remarks || ""}</td>
         </tr>`;
       });
       table += `</table>`;
