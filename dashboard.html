@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <head>
   <title>Training Charts</title>
@@ -13,152 +14,58 @@
       padding: 20px;
       font-family: Arial, sans-serif;
       overflow-x: hidden;
-      background: #f4f7fa;
+      background: #f4f7fa; /* subtle light bg helps charts pop */
     }
 
-    .chart-container {
-      width: 100%;
-      max-width: 348px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .chart-wrapper {
-      width: 100%;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;
-      background: #fff;
-      border-radius: 6px;
-      position: relative;
-    }
-    
-    .half-charts-container {
-      display: flex;
-      width: 100%;
-      gap: 10px;
-    }
-    
-    .half-chart {
-      flex: 1;
-      min-width: 0;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;
-      background: #fff;
-      border-radius: 6px;
-      position: relative;
-    }
-
-    .chart-iframe {
-      width: 100%;
-      display: block;
-      border: none;
-    }
-    
-    /* Responsive aspect ratios */
-    .chart-wrapper::before {
-      content: "";
-      display: block;
-    }
-    .chart1::before { padding-bottom: 109.2%; } /* 380/348 ≈ 109.2% */
-    .chart2::before { padding-bottom: 61.8%; }  /* 215/348 ≈ 61.8% */
-    .chart3::before, .chart4::before { padding-bottom: 32.4%; } /* 56/173 ≈ 32.4% */
-    .chart5::before { padding-bottom: 16.1%; }  /* 56/348 ≈ 16.1% */
-    
-    /* Iframe positioning */
-    .chart-iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Mobile-first adjustments */
-    @media (max-width: 400px) {
-      body {
-        padding: 10px;
-      }
-      
-      .chart-container {
-        max-width: 100%;
-      }
-      
-      .half-charts-container {
-        flex-direction: column;
-      }
-      
-      .half-chart {
-        width: 100%;
-      }
-      
-      /* Adjust aspect ratios for very small screens */
-      .chart3::before, .chart4::before { 
-        padding-bottom: 40%; 
-      }
-    }
-
-    /* Desktop adjustments */
-    @media (min-width: 769px) {
-      .chart-iframe { 
-        overflow: hidden;
-        scrollbar-width: none;
-      }
-      .chart-iframe::-webkit-scrollbar {
-        width: 0; 
-        height: 0;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="chart-container">
-    <!-- Chart 1 (348x380) -->
-    <div class="chart-wrapper chart1">
-      <iframe class="chart-iframe"
+  <!-- Chart 1 (348x380) -->
+  <div class="chart-wrapper">
+    <iframe class="chart1"
+      scrolling="no"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <!-- Chart 2 (348x215) -->
+
+  <div class="chart-wrapper">
+    <iframe class="chart2"
+      scrolling="no"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <!-- Charts 3 & 4 (each 173x56) -->
+
+  <div class="half-charts-container">
+    <div class="half-chart">
+      <iframe class="chart3"
         scrolling="no"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
         loading="lazy">
       </iframe>
     </div>
-
-    <!-- Chart 2 (348x215) -->
-    <div class="chart-wrapper chart2">
-      <iframe class="chart-iframe"
+    <div class="half-chart">
+      <iframe class="chart4"
         scrolling="no"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
         loading="lazy">
       </iframe>
     </div>
+  </div>
 
-    <!-- Charts 3 & 4 (each 173x56) -->
-    <div class="half-charts-container">
-      <div class="half-chart chart3">
-        <iframe class="chart-iframe"
-          scrolling="no"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
-          loading="lazy">
-        </iframe>
-      </div>
-      <div class="half-chart chart4">
-        <iframe class="chart-iframe"
-          scrolling="no"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
-          loading="lazy">
-        </iframe>
-      </div>
-    </div>
+  <!-- Chart 5 (348x56) -->
 
-    <!-- Chart 5 (348x56) -->
-    <div class="chart-wrapper chart5">
-      <iframe class="chart-iframe"
-        scrolling="no"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
-        loading="lazy">
-      </iframe>
-    </div>
+  <div class="chart-wrapper">
+    <iframe class="chart5"
+      scrolling="no"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+      loading="lazy">
+    </iframe>
   </div>
 </body>
 </html>
