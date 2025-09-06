@@ -153,6 +153,7 @@
       text-align: center;
       font-size: 15px;
       margin-bottom: 15px;
+      font-weight: bold;
     }
     .modal-content p {
       margin: 8px 0;
@@ -215,11 +216,13 @@
   <div id="programModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">Training Details</div>
-      <b><div class="modal-date" id="modalDate"></div></b><hr />
+      <div class="modal-date" id="modalDate"></div>
+      <hr />
       <p><strong>Name of the Training</strong><br><span id="modalName"></span></p>
       <p><strong>Resource Persons</strong><br><span id="modalTrainers"></span></p>
       <p><strong>Venue</strong> <br /><span id="modalVenue"></span></p>
-      <p><strong>Remarks</strong><br /> <span id="modalRemarks"></span></p><hr />
+      <p><strong>Remarks</strong><br /> <span id="modalRemarks"></span></p>
+      <hr />
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
   </div>
@@ -242,6 +245,26 @@
       const month = dateObj.toLocaleString("en-US", { month: "short" });
       const year = dateObj.getFullYear().toString().slice(-2);
       return `${day}-${month}-${year}`;
+    }
+
+    function formatModalDate(dateStr) {
+      // Convert date string from format "DD-MMM-YY" to "DD-MMM-YY | Weekday"
+      if (!dateStr) return "";
+      
+      const parts = dateStr.split("-");
+      if (parts.length !== 3) return dateStr;
+      
+      const day = parts[0];
+      const month = parts[1];
+      const year = parts[2];
+      
+      // Create a date object from the string
+      const dateObj = new Date(`${month} ${day}, 20${year}`);
+      
+      // Get the full weekday name
+      const weekday = dateObj.toLocaleString("en-US", { weekday: "long" });
+      
+      return `${day}-${month}-${year} | ${weekday}`;
     }
 
     async function loadPrograms() {
@@ -309,7 +332,9 @@
 
       document.getElementById("modalVenue").innerText = row.Venue || "-";
       document.getElementById("modalRemarks").innerText = row.Remarks || "-";
-      document.getElementById("modalDate").innerText = row.Date || "";
+      
+      // Format the date as requested: "07-Sep-25 | Sunday"
+      document.getElementById("modalDate").innerText = formatModalDate(row.Date) || "";
 
       document.getElementById("programModal").style.display = "flex";
     }
