@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
   <title>Training Charts</title>
@@ -17,6 +16,60 @@
       background: #f4f7fa; /* subtle light bg helps charts pop */
     }
 
+    .chart-wrapper {
+      width: 100%;
+      max-width: 348px;
+      margin-bottom: 10px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;          /* clip any iframe rails */
+      background: #fff;
+      border-radius: 6px;
+    }
+    .half-charts-container {
+      display: flex;
+      width: 100%;
+      max-width: 348px;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+    .half-chart {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;          /* clip any iframe rails */
+      background: #fff;
+      border-radius: 6px;
+    }
+
+    iframe {
+      width: 100%;
+      display: block;
+      border: none;
+      /* keep your original aspect ratios */
+    }
+    .chart1 { aspect-ratio: 348/380; }
+    .chart2 { aspect-ratio: 348/215; }
+    .chart3, .chart4 { aspect-ratio: 173/56; }
+    .chart5 { aspect-ratio: 348/56; }
+
+    /* ===== Desktop-only: hide iframe scrollbars visually ===== */
+    @media (min-width: 769px) {
+      iframe { 
+        overflow: hidden;             /* Chromium/WebKit */
+        scrollbar-width: none;        /* Firefox */
+      }
+      iframe::-webkit-scrollbar {     /* Chromium/WebKit */
+        width: 0; height: 0;
+      }
+      /* small oversize to avoid horizontal bar caused by 1px rounding */
+      .chart-wrapper iframe,
+      .half-chart iframe {
+        width: calc(100% + 2px);
+        margin-left: -1px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -30,7 +83,6 @@
   </div>
 
   <!-- Chart 2 (348x215) -->
-
   <div class="chart-wrapper">
     <iframe class="chart2"
       scrolling="no"
@@ -40,7 +92,6 @@
   </div>
 
   <!-- Charts 3 & 4 (each 173x56) -->
-
   <div class="half-charts-container">
     <div class="half-chart">
       <iframe class="chart3"
@@ -59,7 +110,6 @@
   </div>
 
   <!-- Chart 5 (348x56) -->
-
   <div class="chart-wrapper">
     <iframe class="chart5"
       scrolling="no"
