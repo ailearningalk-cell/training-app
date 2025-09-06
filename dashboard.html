@@ -1,121 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Training Charts</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-      overflow-x: hidden;
-      background: #f4f7fa; /* subtle light bg helps charts pop */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Charts - Fixed</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            background: #f4f7fa;
+        }
 
-    .chart-wrapper {
-      width: 100%;
-      max-width: 348px;
-      margin-bottom: 10px;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;          /* clip any iframe rails */
-      background: #fff;
-      border-radius: 6px;
-    }
-    .half-charts-container {
-      display: flex;
-      width: 100%;
-      max-width: 348px;
-      margin-bottom: 10px;
-      gap: 10px;
-    }
-    .half-chart {
-      flex: 1;
-      min-width: 0;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;          /* clip any iframe rails */
-      background: #fff;
-      border-radius: 6px;
-    }
+        .chart-wrapper {
+            width: 100%;
+            max-width: 348px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: #fff;
+            border-radius: 6px;
+        }
+        
+        .half-charts-container {
+            display: flex;
+            width: 100%;
+            max-width: 348px;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        
+        .half-chart {
+            flex: 1;
+            min-width: 0;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+            background: #fff;
+            border-radius: 6px;
+        }
 
-    iframe {
-      width: 100%;
-      display: block;
-      border: none;
-      /* keep your original aspect ratios */
-    }
-    .chart1 { aspect-ratio: 348/380; }
-    .chart2 { aspect-ratio: 348/215; }
-    .chart3, .chart4 { aspect-ratio: 173/56; }
-    .chart5 { aspect-ratio: 348/56; }
+        iframe {
+            width: 100%;
+            display: block;
+            border: none;
+        }
+        
+        .chart1 { 
+            aspect-ratio: 348/380;
+            height: auto;
+        }
+        
+        .chart2 { 
+            aspect-ratio: 348/215;
+            height: auto;
+        }
+        
+        .chart3, .chart4 { 
+            aspect-ratio: 173/56;
+            height: auto;
+        }
+        
+        .chart5 { 
+            aspect-ratio: 348/56;
+            height: auto;
+        }
 
-    /* ===== Desktop-only: hide iframe scrollbars visually ===== */
-    @media (min-width: 769px) {
-      iframe { 
-        overflow: hidden;             /* Chromium/WebKit */
-        scrollbar-width: none;        /* Firefox */
-      }
-      iframe::-webkit-scrollbar {     /* Chromium/WebKit */
-        width: 0; height: 0;
-      }
-      /* small oversize to avoid horizontal bar caused by 1px rounding */
-      .chart-wrapper iframe,
-      .half-chart iframe {
-        width: calc(100% + 2px);
-        margin-left: -1px;
-      }
-    }
-  </style>
+        /* Mobile-specific fixes */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+            
+            .chart-wrapper, .half-charts-container {
+                max-width: 100%;
+            }
+            
+            /* Ensure iframes don't get cut off */
+            .chart-wrapper, .half-chart {
+                overflow: visible;
+            }
+            
+            iframe {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            /* Adjust layout for very small screens */
+            @media (max-width: 350px) {
+                .half-charts-container {
+                    flex-direction: column;
+                }
+                
+                .half-chart {
+                    width: 100%;
+                }
+                
+                .chart3, .chart4 {
+                    aspect-ratio: 348/56;
+                }
+            }
+        }
+
+        /* Desktop scrollbar fixes */
+        @media (min-width: 769px) {
+            iframe { 
+                overflow: hidden;
+                scrollbar-width: none;
+            }
+            
+            iframe::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+            }
+            
+            .chart-wrapper iframe,
+            .half-chart iframe {
+                width: calc(100% + 2px);
+                margin-left: -1px;
+            }
+        }
+        
+        /* Fallback for browsers that don't support aspect-ratio */
+        @supports not (aspect-ratio: 1/1) {
+            .chart1 {
+                height: 380px;
+            }
+            
+            .chart2 {
+                height: 215px;
+            }
+            
+            .chart3, .chart4 {
+                height: 56px;
+            }
+            
+            .chart5 {
+                height: 56px;
+            }
+            
+            @media (max-width: 480px) {
+                .chart1 {
+                    height: auto;
+                    min-height: 300px;
+                }
+                
+                .chart2 {
+                    height: auto;
+                    min-height: 180px;
+                }
+                
+                .chart3, .chart4 {
+                    height: auto;
+                    min-height: 45px;
+                }
+                
+                .chart5 {
+                    height: auto;
+                    min-height: 45px;
+                }
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Chart 1 (348x380) -->
-  <div class="chart-wrapper">
-    <iframe class="chart1"
-      scrolling="no"
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
-      loading="lazy">
-    </iframe>
-  </div>
-
-  <!-- Chart 2 (348x215) -->
-  <div class="chart-wrapper">
-    <iframe class="chart2"
-      scrolling="no"
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
-      loading="lazy">
-    </iframe>
-  </div>
-
-  <!-- Charts 3 & 4 (each 173x56) -->
-  <div class="half-charts-container">
-    <div class="half-chart">
-      <iframe class="chart3"
-        scrolling="no"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
-        loading="lazy">
-      </iframe>
+    <!-- Chart 1 (348x380) -->
+    <div class="chart-wrapper">
+        <iframe class="chart1"
+            scrolling="no"
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=1831511795&format=interactive"
+            loading="lazy">
+        </iframe>
     </div>
-    <div class="half-chart">
-      <iframe class="chart4"
-        scrolling="no"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
-        loading="lazy">
-      </iframe>
-    </div>
-  </div>
 
-  <!-- Chart 5 (348x56) -->
-  <div class="chart-wrapper">
-    <iframe class="chart5"
-      scrolling="no"
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
-      loading="lazy">
-    </iframe>
-  </div>
+    <!-- Chart 2 (348x215) -->
+    <div class="chart-wrapper">
+        <iframe class="chart2"
+            scrolling="no"
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=2040834026&format=interactive"
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <!-- Charts 3 & 4 (each 173x56) -->
+    <div class="half-charts-container">
+        <div class="half-chart">
+            <iframe class="chart3"
+                scrolling="no"
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=41086309&format=interactive"
+                loading="lazy">
+            </iframe>
+        </div>
+        <div class="half-chart">
+            <iframe class="chart4"
+                scrolling="no"
+                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=740512050&format=interactive"
+                loading="lazy">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Chart 5 (348x56) -->
+    <div class="chart-wrapper">
+        <iframe class="chart5"
+            scrolling="no"
+            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vR9BsrnA7CMs3673knJ0H3uprWwOHcmuysd_rThkY_DAJTz3lXbFZi-iPd2Oci2u1qwNk3VwG534twe/pubchart?oid=972416916&format=interactive"
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <script>
+        // Additional JavaScript to help with responsiveness
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to check if an element is partially out of viewport
+            function isElementCutOff(el) {
+                const rect = el.getBoundingClientRect();
+                const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                
+                // Check if element is outside viewport
+                return (
+                    rect.right > viewportWidth ||
+                    rect.bottom > viewportHeight ||
+                    rect.left < 0 ||
+                    rect.top < 0
+                );
+            }
+            
+            // Check all iframes on load and resize
+            function checkIframes() {
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(iframe => {
+                    if (isElementCutOff(iframe)) {
+                        // Add a class to iframes that are cut off
+                        iframe.classList.add('cut-off-detected');
+                    } else {
+                        iframe.classList.remove('cut-off-detected');
+                    }
+                });
+            }
+            
+            // Run on load and resize
+            window.addEventListener('load', checkIframes);
+            window.addEventListener('resize', checkIframes);
+            
+            // Additional fix for mobile devices
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                document.body.classList.add('mobile-device');
+                
+                // Force reflow on iframes to prevent rendering issues
+                setTimeout(() => {
+                    const iframes = document.querySelectorAll('iframe');
+                    iframes.forEach(iframe => {
+                        iframe.style.display = 'none';
+                        setTimeout(() => {
+                            iframe.style.display = 'block';
+                        }, 50);
+                    });
+                }, 500);
+            }
+        });
+    </script>
 </body>
 </html>
